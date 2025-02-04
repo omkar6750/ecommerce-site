@@ -117,7 +117,8 @@ Welcome to the **E-Commerce Site** project! This application is built with a **F
 
 - **Real Data Integration:**  
   The app currently displays mock data; product data is not in the database yet
-
+- **JWT cookies:**
+   currently jwt cookies are being stored in localstorage which is not very secure will update that eventually
 ---
 
 ## Additional Notes
