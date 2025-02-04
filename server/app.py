@@ -345,7 +345,7 @@ def order_generated(order_id):
 @app.route("/fetch_products", methods=["GET"])
 def fetch_products():
     page = request.args.get("page", 1, type=int)  # Default page 1
-    per_page = 10  # Number of products per request
+    per_page = 10 
 
     paginated_products = Product.query.paginate(page=page, per_page=per_page, error_out=False)
 
@@ -369,5 +369,5 @@ def fetch_products():
 # ------------------------- Run Flask App ------------------------- #
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # Create database tables if they don’t exist
+        db.create_all() 
     app.run(debug=True)
