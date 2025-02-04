@@ -17,19 +17,7 @@ const NewCollections = () => {
         <h1 className='text-slate-900 font-semibold text-5xl mt-10'>NEW COLLECTIONS</h1>
         <hr className='w-52 h-1 rounded-xl bg-[#252525]'/>
         <div className='mt-12 flex gap-8'>
-            {/* {new_collections.map((item, i) => {
-                return <Item key={i} id={item.id} image={item.image} name={item.name} old_price={item.old_price} new_price={item.new_price} />
-            })} */}
-            {/* <Carousel 
-                plugins={[
-                    Autoplay({
-                    delay: 2000,
-                    }),
-                ]}>
-                <CarouselContent>
-
-                </CarouselContent>
-            </Carousel> */}
+            
             <Carousel
             opts={{
               align: "start",
@@ -48,8 +36,8 @@ const NewCollections = () => {
                     <Card>
                       <CardContent className="flex aspect-square items-center justify-center p-6">
                         <Item
-                          id={item.id}
-                          image={item.image}
+                          id={item.product_id}
+                          image={item.product_image}
                           name={item.name}
                           old_price={item.old_price}
                           new_price={item.new_price}

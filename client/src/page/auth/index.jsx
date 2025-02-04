@@ -1,23 +1,100 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import apiClient from '@/lib/apiClient'
+import { LOGIN_ROUTE, SIGNUP_ROUTE } from '@/Utils/constants'
 import React, { useState } from 'react'
-// import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
+import { useNavigate } from 'react-router-dom'
+import { useAppStore } from '@/Store'
 
 
 const Auth=() =>{
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const { setUserInfo } = useAppStore();
 
 
-    const handleSignUp = () => {
-        console.log('signup')
+    const handleError = (data) => {
+        
+        switch (data) {
+            case "email-password-required":
+                toast.error("Email and Password are required.");
+                break;
+            case "password-too-short":
+                toast.error("Password is too short.");
+                break;
+            case "password-missing-letter":
+                toast.error("Password must contain at least one letter.");
+                break;
+            case "password-missing-digit":
+                toast.error("Password must contain at least one digit.");
+                break;
+            case "password-missing-special-character":
+                toast.error("Password must contain at least one special character (@, $, !, %, *, ?, &).");
+                break;
+            case "password-invalid-characters":
+                toast.error("Password contains invalid characters. Only letters, digits, and specific special characters are allowed.");
+                break;
+            case "email-invalid":
+                toast.error("Email is invalid.");
+                break;
+            case "email-listed":
+                toast.error("Email is already registered.");
+                break;
+            case "internal-server-error":
+                toast.error("An unexpected error occurred. Please try again later.");
+                break;
+            case "user-not-found":
+                toast.error("User not found.");
+                break;
+            case "password-incorrect":
+                toast.error("Password is incorrect.");
+                break;
+            default:
+                toast.error("An unknown error occurred.");
+        }
     }
-    const handeleLogin = () => {
-        console.log('login')
-    }
+
+
+    const handleSignUp = async () => {
+        try {
+            const response = await apiClient.post(SIGNUP_ROUTE, { email, password });
+            console.log(response.status)
+            if (response.status === 201) {
+                const token = response.data.access_token;
+                localStorage.setItem("token", token); 
+                setUserInfo(response.data.user)
+                navigate("/profile"); 
+            }
+        } catch (error) {
+            handleError(error.response?.data?.error || "Signup failed");
+        }
+    };
+
+    const handleLogin = async () => {
+        try {
+            const response = await apiClient.post(LOGIN_ROUTE, { email, password });
+            
+            if (response.status === 200) {
+                const { access_token, user } = response.data;
+                
+                localStorage.setItem("token", access_token);
+                
+                localStorage.setItem("user", JSON.stringify(user));
+                setUserInfo(response.data.user)
+
+                
+                navigate("/dashboard");
+            }
+        } catch (error) {
+            handleError(error.response?.data?.error || "Login failed");
+        }
+    };
+
+
   return (
     
     <div className='flex justify-center items-center h-screen w-full'>
@@ -45,7 +122,7 @@ const Auth=() =>{
                                     <Input placeholder="Password" type="password" className='rounded-full p-6' value={password} onChange={(e) => setPassword(e.target.value)}
                                     />
                                     <Button className='rounded-full p-6'
-                                     onClick={() => {handeleLogin()}}>Login</Button>
+                                     onClick={() => {handleLogin()}}>Login</Button>
                                 </TabsContent>
                                 <TabsContent className='flex flex-col gap-5 ' value="signup">
                                 <Input placeholder="Email" type="email" className='rounded-full p-6' value={email} onChange={(e) => setEmail(e.target.value)}
