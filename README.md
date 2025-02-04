@@ -17,6 +17,7 @@ Welcome to the **E-Commerce Site** project! This application is built with a **F
 - **Zustand:** Lightweight state management.
 
 ### Backend
+- **Python:** 3.13  
 - **Flask:** Lightweight Python web framework.
 - **Flask-CORS:** Enables Cross-Origin Resource Sharing.
 - **SQLAlchemy:** ORM for database interactions.
@@ -115,7 +116,7 @@ Welcome to the **E-Commerce Site** project! This application is built with a **F
   Basic admin routes exist, but product editing and other admin actions need further development.
 
 - **Real Data Integration:**  
-  The app currently displays mock data; integration with real database data is pending.
+  The app currently displays mock data; product data is not in the database yet
 
 ---
 
