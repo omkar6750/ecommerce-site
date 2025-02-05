@@ -1,15 +1,15 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const AdminPanel = () => {
-    const history = useHistory();
+    const navigate = useNavigate()
 
     const handleCreateProduct = () => {
-        history.push('/admin/create');
+        navigate('/admin/create');
     };
 
     const handleEditProduct = () => {
-        history.push('/admin/edit');
+        navigate('/admin/edit');
     };
 
     return (

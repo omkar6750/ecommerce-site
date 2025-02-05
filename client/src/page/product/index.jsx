@@ -6,12 +6,12 @@ const ProductCard = ({ product }) => {
 
     return (
         <div className="bg-white shadow-lg rounded-lg p-4 w-64">
-            <img 
+            {/* <img 
                 src={product.image} 
                 alt={product.name} 
                 className="w-full h-40 object-cover rounded-md"
-            />
-            <div className="mt-4">
+            /> */}
+            {/* <div className="mt-4">
                 <h2 className="text-lg font-semibold">{product.name}</h2>
                 <p className="text-gray-600">${product.price}</p>
                 <button 
@@ -20,7 +20,8 @@ const ProductCard = ({ product }) => {
                 >
                     Add to Cart
                 </button>
-            </div>
+            </div> */}
+            work in progress
         </div>
     );
 };
