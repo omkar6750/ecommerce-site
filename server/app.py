@@ -9,6 +9,8 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 import uuid
 from dotenv import load_dotenv
 from flask_cors import CORS
+from werkzeug.utils import secure_filename
+
 
 load_dotenv()
 
@@ -104,12 +106,10 @@ def signup():
         if not all(c.isalnum() or c in "@$!%*?&" for c in password):
             return jsonify({"error": "password-invalid-characters"}), 400
 
-        # Check if email is already in use
         existing_user = User.query.filter_by(email=email).first()
         if existing_user:
             return jsonify({"error": "email-listed"}), 400
 
-        # Create new user
         hashed_password = generate_password_hash(password)
         new_user = User(email=email, password=hashed_password)
 
@@ -139,16 +139,13 @@ def login():
         data = request.get_json()
         print(data)
 
-        # Check if user exists
         user = User.query.filter_by(email=data["email"]).first()
         if not user:
             return jsonify({"error": "User not found"}), 404
 
-        # Verify password
         if not check_password_hash(user.password, data["password"]):
             return jsonify({"error": "Invalid password"}), 401
 
-        # Generate JWT Token
         access_token = create_access_token(identity=user.id)
 
         return jsonify({
@@ -165,8 +162,9 @@ def login():
 
 
 @app.route('/profile_creation', methods=['POST'])
+@jwt_required()
 def profile_creation():
-    user_id = get_jwt_identity()  # Get user ID from JWT token
+    user_id = get_jwt_identity()  
     data = request.get_json()
 
     # Find the user in the database
@@ -206,8 +204,8 @@ def create_product():
     user = User.query.get(user_id)
 
     # Check if user exists and is an admin
-    if not user or not user.is_admin:
-        return jsonify({"error": "Admin access required"}), 403
+    # if not user or not user.is_admin:
+    #     return jsonify({"error": "Admin access required"}), 403
 
     data = request.get_json()
 
@@ -215,7 +213,7 @@ def create_product():
     new_product = Product(
         name=data["name"],
         size=data["size"],
-        tags=data["tags"],  # Store as comma-separated string
+        tags=data["tags"],  
         gender=data["gender"],
         colour=data["colour"],
         old_price=data["old_price"],
@@ -246,10 +244,9 @@ def create_product():
 @app.route('/edit_product/<string:product_id>', methods=['PUT'])
 @jwt_required()
 def edit_product(product_id):
+
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
-
-    # Check admin access
     if not user or not user.is_admin:
         return jsonify({"error": "Admin access required"}), 403
 
@@ -259,15 +256,13 @@ def edit_product(product_id):
 
     data = request.get_json()
 
-    # Update product fields
     product.name = data.get("name", product.name)
     product.size = data.get("size", product.size)
-    product.tags = data.get("tags", product.tags)
+    product.tags = data.get("tags", product.tags)  
     product.gender = data.get("gender", product.gender)
     product.colour = data.get("colour", product.colour)
     product.old_price = data.get("old_price", product.old_price)
     product.new_price = data.get("new_price", product.new_price)
-    product.product_image = data.get("product_image", product.product_image)
     product.description = data.get("description", product.description)
 
     db.session.commit()
@@ -275,7 +270,7 @@ def edit_product(product_id):
     return jsonify({
         "message": "Product updated successfully",
         "product": {
-            "id": product.id,
+            "id": product.product_id,
             "name": product.name,
             "size": product.size,
             "tags": product.tags,
@@ -288,24 +283,76 @@ def edit_product(product_id):
         }
     }), 200
 
+
 @app.route('/delete_product/<string:product_id>', methods=['DELETE'])
 @jwt_required()
 def delete_product(product_id):
+    # Check for admin access
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
-
-    # Check admin access
-    if not user or not user.is_admin:
-        return jsonify({"error": "Admin access required"}), 403
+    # if not user or not user.is_admin:
+    #     return jsonify({"error": "Admin access required"}), 403
 
     product = Product.query.get(product_id)
     if not product:
         return jsonify({"error": "Product not found"}), 404
 
+    if product.product_image:
+        upload_folder = app.config.get("UPLOAD_FOLDER", "uploads")
+        file_path = os.path.join(upload_folder, product.product_image)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
     db.session.delete(product)
     db.session.commit()
 
     return jsonify({"message": "Product deleted successfully"}), 200
+
+@app.route('/product_image_upload', methods=['POST'])
+@jwt_required()
+def product_image_upload():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    # if not user or not user.is_admin:
+    #     return jsonify({"error": "Admin access required"}), 403
+
+    product_id = request.form.get('productId')
+    if not product_id:
+        return jsonify({"error": "Product ID is required"}), 400
+
+    product = Product.query.get(product_id)
+    if not product:
+        return jsonify({"error": "Product not found"}), 404
+
+    if 'file' not in request.files:
+        return jsonify({"error": "No file provided"}), 400
+
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+
+    original_filename = secure_filename(file.filename)
+    new_filename = f"{product_id}_{original_filename}"
+
+    upload_folder = app.config.get("UPLOAD_FOLDER", "uploads")
+    if not os.path.exists(upload_folder):
+        os.makedirs(upload_folder)
+    file_path = os.path.join(upload_folder, new_filename)
+
+    if product.product_image:
+        old_file_path = os.path.join(upload_folder, product.product_image)
+        if os.path.exists(old_file_path):
+            os.remove(old_file_path)
+
+    file.save(file_path)
+
+    product.product_image = new_filename
+    db.session.commit()
+
+    return jsonify({
+        "message": "Image uploaded successfully",
+        "product_image": new_filename
+    }), 200
 
 # Order & Cart Routes
 @app.route("/order_generated/<int:order_id>", methods=["GET"])
@@ -317,7 +364,6 @@ def order_generated(order_id):
     if not order:
         return jsonify({"error": "Order not found"}), 404
 
-    # Fetch order details
     order_items = OrderItem.query.filter_by(order_id=order.id).all()
     product_list = []
 
@@ -344,8 +390,8 @@ def order_generated(order_id):
 # Product Fetching
 @app.route("/fetch_products", methods=["GET"])
 def fetch_products():
-    page = request.args.get("page", 1, type=int)  # Default page 1
-    per_page = 10  # Number of products per request
+    page = request.args.get("page", 1, type=int) 
+    per_page = 10 
 
     paginated_products = Product.query.paginate(page=page, per_page=per_page, error_out=False)
 
@@ -369,5 +415,5 @@ def fetch_products():
 # ------------------------- Run Flask App ------------------------- #
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # Create database tables if they don’t exist
+        db.create_all()  
     app.run(debug=True)
