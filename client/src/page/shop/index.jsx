@@ -8,9 +8,9 @@ function Shop() {
   return (
     <div className='flex flex-col'>
       <Hero></Hero>
-      <Popular></Popular>
+      {/* <Popular></Popular>
       <Offers></Offers>
-      <NewCollections />
+      <NewCollections /> */}
     </div>
   )
 }

@@ -1,5 +1,4 @@
 import React from 'react'
-import new_collections from '@/assets/Frontend_Assets/new_collections'
 import Item from './Item'
 import {
     Carousel,

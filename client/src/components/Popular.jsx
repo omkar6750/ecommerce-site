@@ -1,5 +1,4 @@
 import React from 'react'
-import data_product from '@/assets/Frontend_Assets/data'
 import Item from './Item'
 
 const Popular = () => {

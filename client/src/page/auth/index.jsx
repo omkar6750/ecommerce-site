@@ -14,7 +14,7 @@ const Auth=() =>{
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const { setUserInfo } = useAppStore();
+    const { setUserInfo, profileCreated } = useAppStore();
 
 
     const handleError = (data) => {
@@ -54,20 +54,24 @@ const Auth=() =>{
                 toast.error("Password is incorrect.");
                 break;
             default:
-                toast.error("An unknown error occurred.");
+                console.log(data)
+                toast.error(data);
+
         }
     }
 
 
     const handleSignUp = async () => {
         try {
-            const response = await apiClient.post(SIGNUP_ROUTE, { email, password });
+            const response = await apiClient.post(SIGNUP_ROUTE, { email, password }, {withCredentials:true});
             console.log(response.status)
             if (response.status === 201) {
-                const token = response.data.access_token;
-                localStorage.setItem("token", token); 
                 setUserInfo(response.data.user)
-                navigate("/profile"); 
+                if(profileCreated){
+                    navigate("/profile"); 
+                }else{
+                    navigate('/shop')
+                }
             }
         } catch (error) {
             handleError(error.response?.data?.error || "Signup failed");
@@ -76,21 +80,21 @@ const Auth=() =>{
 
     const handleLogin = async () => {
         try {
-            const response = await apiClient.post(LOGIN_ROUTE, { email, password });
+            const response = await apiClient.post(LOGIN_ROUTE, { email, password }, {withCredentials:true});
             
             if (response.status === 200) {
-                const { access_token, user } = response.data;
                 
-                localStorage.setItem("token", access_token);
-                
-                localStorage.setItem("user", JSON.stringify(user));
                 setUserInfo(response.data.user)
-
+                toast.success("Login successfull")
+                if(profileCreated){
+                    navigate('/')
+                }else{
+                    navigate('/profile')
+                }
                 
-                navigate("/dashboard");
             }
         } catch (error) {
-            handleError(error.response?.data?.error || "Login failed");
+            handleError(error.response.data.error || "Login failed");
         }
     };
 
@@ -98,7 +102,7 @@ const Auth=() =>{
   return (
     
     <div className='flex justify-center items-center h-screen w-full'>
-<div className="h-[80vh] w-[80vw] flex items-center justify-center absolute z-20">
+            <div className="h-[80vh] w-[80vw] flex items-center justify-center absolute z-20">
                 <div className="flex justify-center h-[80vh] bg-white/70 border-2 text-opacity-90 shadow-2xl w-[80vw] md:w-[90vw] lg:w-[70vw] xl:w-[60vw] rounded-3xl xl:grid-cols-2">
                     <div className="flex lg:gap-24 md:gap-12 sm:gap-5 items-center">
                         <div className="flex items-center justify-center flex-col ">

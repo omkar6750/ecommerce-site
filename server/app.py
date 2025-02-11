@@ -1,15 +1,22 @@
 import os
+import random
 from flask_migrate import Migrate
 from flask import Flask, request, jsonify
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, verify_jwt_in_request, set_access_cookies
 import uuid
 from dotenv import load_dotenv
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
+from flask import send_from_directory, current_app
+from flask import make_response
+from datetime import timedelta
+
+
+
 
 
 load_dotenv()
@@ -20,12 +27,25 @@ load_dotenv()
 app = Flask(__name__)
 
 CORS(app, resources={r"/*": {
-    "origins": "http://localhost:5173",
+    "origins": os.environ.get('CORS_URI'),
     "methods": ["GET", "POST", "PUT", "DELETE"],
-    "allow_headers": ["Content-Type", "Authorization"]
+    "allow_headers": ["Content-Type", "Authorization"],
+    "supports_credentials": True  
 }})
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'  
-app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY")
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
+
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY') 
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = 172800 
+app.config["JWT_TOKEN_LOCATION"] = ["cookies"]  
+app.config["JWT_ACCESS_COOKIE_NAME"] = "access_token"
+app.config["JWT_COOKIE_SECURE"] = True  # Set to True if using HTTPS
+app.config["JWT_COOKIE_CSRF_PROTECT"] = False 
+
+app.config["JWT_TOKEN_LOCATION"] = ["cookies"]  # ✅ Use only cookies
+app.config["JWT_ACCESS_COOKIE_NAME"] = "access_token"
+
+
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
@@ -77,6 +97,11 @@ class OrderItem(db.Model):
 
 # ------------------------- API Endpoints ------------------------- #
 
+@app.route('/uploads/<filename>')
+def upload_file(filename):
+    upload_folder = current_app.config.get('UPLOAD_FOLDER', 'uploads')
+    return send_from_directory(upload_folder, filename)
+
 # Authentication Routes
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -118,14 +143,24 @@ def signup():
 
         access_token = create_access_token(identity=new_user.id)
 
-        return jsonify({
+        response = make_response(jsonify({
             "user": {
                 "id": new_user.id,
                 "email": new_user.email,
                 "profileSetup": False,
-            },
-            "access_token": access_token
-        }), 201
+            }
+        }), 201)
+
+        response.set_cookie(
+            "access_token",
+            access_token,
+            max_age=2 * 24 * 60 * 60,  # 2 days in seconds
+            httponly=True, 
+            samesite="None",  # Helps with CSRF protection
+            secure=False,  # Change to True if using HTTPS
+
+        )
+        return response
 
     except Exception as e:
         print("Signup error:", str(e))
@@ -146,24 +181,42 @@ def login():
         if not check_password_hash(user.password, data["password"]):
             return jsonify({"error": "Invalid password"}), 401
 
-        access_token = create_access_token(identity=user.id)
+        access_token = create_access_token(identity=user.id, )
 
-        return jsonify({
+        response = make_response(jsonify({
             "message": "Login successful",
             "user": {
                 "id": user.id,
                 "email": user.email
-            },
-            "access_token": access_token
-        }), 200
+            }
+        }), 200)
+
+        response.set_cookie(
+            "access_token",
+            access_token,
+            max_age=2 * 24 * 60 * 60,  # 2 days in seconds
+            httponly=True,  # Prevents JavaScript access
+            samesite="None",  # Helps with CSRF protection
+            secure=True,  # Change to True if using HTTPS
+
+        )
+        return response
+    
     except Exception as e:
         print("Signup error:", str(e))
         return jsonify({"error": "Internal Server Error"}), 500
+    
+@app.route("/logout", methods=["POST"])
+def logout():
+    response = make_response(jsonify({"message": "Logout successful"}))
+    response.set_cookie("access_token", "", expires=0)  # Clears the cookie
+    return response
+
 
 
 @app.route('/profile_creation', methods=['POST'])
-@jwt_required()
 def profile_creation():
+    verify_jwt_in_request(optional=True)
     user_id = get_jwt_identity()  
     data = request.get_json()
 
@@ -198,14 +251,14 @@ def profile_creation():
 
 # Product Management (Admin Only)
 @app.route('/create_product', methods=['POST'])
-@jwt_required()  # Require authentication
 def create_product():
+    verify_jwt_in_request(optional=False)
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
+    print("This i suser:",user)
 
-    # Check if user exists and is an admin
-    # if not user or not user.is_admin:
-    #     return jsonify({"error": "Admin access required"}), 403
+    if not user or not user.is_admin:
+        return jsonify({"error": "Admin access required"}), 403
 
     data = request.get_json()
 
@@ -225,10 +278,11 @@ def create_product():
     db.session.add(new_product)
     db.session.commit()
 
+
     return jsonify({
         "message": "Product created successfully",
         "product": {
-            "id": new_product.id,
+            "id": new_product.product_id,
             "name": new_product.name,
             "size": new_product.size,
             "tags": new_product.tags,
@@ -241,29 +295,30 @@ def create_product():
         }
     }), 201
 
-@app.route('/edit_product/<string:product_id>', methods=['PUT'])
-@jwt_required()
-def edit_product(product_id):
+@app.route('/edit_product', methods=['PUT'])
+def edit_product():
+    verify_jwt_in_request(optional=True)
 
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
+
     if not user or not user.is_admin:
         return jsonify({"error": "Admin access required"}), 403
+
+    data = request.get_json()
+    product_id = data.get("product_id")  
+
+    if not product_id:
+        return jsonify({"error": "Missing product_id"}), 400
 
     product = Product.query.get(product_id)
     if not product:
         return jsonify({"error": "Product not found"}), 404
 
-    data = request.get_json()
-
-    product.name = data.get("name", product.name)
-    product.size = data.get("size", product.size)
-    product.tags = data.get("tags", product.tags)  
-    product.gender = data.get("gender", product.gender)
-    product.colour = data.get("colour", product.colour)
-    product.old_price = data.get("old_price", product.old_price)
-    product.new_price = data.get("new_price", product.new_price)
-    product.description = data.get("description", product.description)
+    # Update product details
+    for key in ["name", "size", "tags", "gender", "colour", "old_price", "new_price", "description"]:
+        if key in data:
+            setattr(product, key, data[key])
 
     db.session.commit()
 
@@ -278,24 +333,27 @@ def edit_product(product_id):
             "colour": product.colour,
             "old_price": product.old_price,
             "new_price": product.new_price,
-            "product_image": product.product_image,
-            "description": product.description
+            "description": product.description,
         }
     }), 200
 
 
-@app.route('/delete_product/<string:product_id>', methods=['DELETE'])
-@jwt_required()
-def delete_product(product_id):
-    # Check for admin access
+@app.route('/delete_product', methods=['DELETE'])
+def delete_product():
+    verify_jwt_in_request(optional=True)
+
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
-    # if not user or not user.is_admin:
-    #     return jsonify({"error": "Admin access required"}), 403
+    if not user or not user.is_admin:
+        return jsonify({"error": "Admin access required"}), 403
+    
+    data = request.get_json()
+    product_id = data.get("product_id")
 
     product = Product.query.get(product_id)
     if not product:
         return jsonify({"error": "Product not found"}), 404
+    print(product)
 
     if product.product_image:
         upload_folder = app.config.get("UPLOAD_FOLDER", "uploads")
@@ -308,18 +366,26 @@ def delete_product(product_id):
 
     return jsonify({"message": "Product deleted successfully"}), 200
 
+
 @app.route('/product_image_upload', methods=['POST'])
-@jwt_required()
 def product_image_upload():
+    
+    verify_jwt_in_request(optional=True)
+    
+    product_id = request.form.get("productId")
+    if not product_id:
+        return jsonify({"error": "Product ID is required"}), 400
+    
+    print("Product ID received:", product_id)
+    print("Files received:", request.files)
+
+
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     # if not user or not user.is_admin:
     #     return jsonify({"error": "Admin access required"}), 403
 
-    product_id = request.form.get('productId')
-    if not product_id:
-        return jsonify({"error": "Product ID is required"}), 400
-
+    
     product = Product.query.get(product_id)
     if not product:
         return jsonify({"error": "Product not found"}), 404
@@ -347,7 +413,9 @@ def product_image_upload():
     file.save(file_path)
 
     product.product_image = new_filename
+    print(f"updating product image : {new_filename}")
     db.session.commit()
+
 
     return jsonify({
         "message": "Image uploaded successfully",
@@ -356,8 +424,9 @@ def product_image_upload():
 
 # Order & Cart Routes
 @app.route("/order_generated/<int:order_id>", methods=["GET"])
-@jwt_required()
 def order_generated(order_id):
+    verify_jwt_in_request(optional=True)
+
     user_id = get_jwt_identity()
     order = Order.query.filter_by(id=order_id, user_id=user_id).first()
 
@@ -388,32 +457,76 @@ def order_generated(order_id):
 
 
 # Product Fetching
-@app.route("/fetch_products", methods=["GET"])
+@app.route("/fetch_products", methods=["POST"])
 def fetch_products():
-    page = request.args.get("page", 1, type=int) 
-    per_page = 10 
+    page = request.args.get("page", 1, type=int)
+    per_page = 10
 
-    paginated_products = Product.query.paginate(page=page, per_page=per_page, error_out=False)
+    # Get filter data from the request JSON body
+    verify_jwt_in_request(optional=True)
 
-    products = []
-    for product in paginated_products.items:
-        products.append({
-            "product_id": product.id,
-            "name": product.name,
-            "size": product.size,
-            "tags": product.tags,
-            "gender": product.gender,
-            "colour": product.colour,
-            "old_price": product.old_price,
-            "new_price": product.new_price,
-            "product_image": product.product_image,
-            "description": product.description
-        })
+    data = request.get_json() or {}
+    filters = data.get("filters", {})
 
-    return jsonify({"products": products, "total_pages": paginated_products.pages}), 200
+    # Start with the base query
+    query = Product.query
+
+    # Dynamically add filters to the query
+    for key, value in filters.items():
+        if hasattr(Product, key):
+            query = query.filter(getattr(Product, key) == value)
+
+    # The query is executed here with pagination
+    paginated_products = query.paginate(page=page, per_page=per_page, error_out=False)
+
+    products_list = paginated_products.items
+    random.shuffle(products_list)
+
+    products = [{
+        "product_id": product.product_id,
+        "name": product.name,
+        "size": product.size,
+        "tags": product.tags,
+        "gender": product.gender,
+        "colour": product.colour,
+        "old_price": product.old_price,
+        "new_price": product.new_price,
+        "product_image": product.product_image,
+        "description": product.description
+    } for product in paginated_products.items]
+
+    return jsonify({
+        "products": products,
+        "total_pages": paginated_products.pages
+    }), 200
+
+@app.route("/fetch_single_product/<string:product_id>", methods=["GET"])
+def fetch_single_product(product_id):
+    verify_jwt_in_request(optional=True)
+    product = Product.query.filter_by(product_id=product_id).first()
+
+    if not product:
+        return jsonify({"error": "Product not found"}), 404
+
+    product_data = {
+        "product_id": product.product_id,
+        "name": product.name,
+        "size": product.size,
+        "tags": product.tags,
+        "gender": product.gender,
+        "colour": product.colour,
+        "old_price": product.old_price,
+        "new_price": product.new_price,
+        "product_image": product.product_image,
+        "description": product.description
+    }
+
+    return jsonify(product_data), 200
+
+
 
 # ------------------------- Run Flask App ------------------------- #
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()  
-    app.run(debug=True)
+        app.run(debug=True)

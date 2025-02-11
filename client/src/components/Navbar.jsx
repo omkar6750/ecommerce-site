@@ -1,15 +1,16 @@
 import React, { useState } from 'react'
-import logo from '../assets/Frontend_Assets/logo.png'
-import cart_icon from '../assets/Frontend_Assets/cart_icon.png'
+import logo from '../assets/Frontend_Assets/logo/logo.png'
 import { ShoppingCart } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useAppStore } from '@/Store'
 
 
 function Navbar() {
-    const [menu, setMenu] = useState('shop')
     const {cart} = useAppStore()
-  return (
+    const location = useLocation();
+    const menu = location.pathname;
+    
+    return (
     <div className='flex justify-around border-b-2 p-4'>
         <div  className=' flex items-center '>
             <img src={logo} alt="" />
@@ -18,32 +19,29 @@ function Navbar() {
         <ul className='justify-around w-80 items-center flex list-none '>
             <li 
             className='flex flex-col items-center justify-center text-xl text-gray-600 cursor-pointer '
-            onClick={() => setMenu('shop')}
             >
                 <Link to={'/'}>Shop</Link> 
-                {menu === 'shop'? (<hr className='w-16 h-1 my-2 rounded-full bg-red-600'/>):<></>}
+                {menu === '/'? (<hr className='w-16 h-1 my-2 rounded-full bg-red-600'/>):<></>}
             </li>
             
             <li 
             className='flex flex-col items-center justify-center text-xl text-gray-600 cursor-pointer '
-            onClick={() => setMenu('mens')}
             >
                 <Link to={'/mens'}>Mens</Link> 
-                {menu === 'mens'? (<hr className='w-16 h-1 my-2 rounded-full bg-red-600 '/>):<></>}
+                {menu === '/mens'? (<hr className='w-16 h-1 my-2 rounded-full bg-red-600 '/>):<></>}
             </li>
             <li 
             className='flex flex-col items-center justify-center text-xl text-gray-600 cursor-pointer '
-            onClick={() => setMenu('womens')}
             >
                 <Link to={'/womens'}>Womens</Link> 
-                {menu === 'womens'? (<hr className='w-16 h-1 my-2 rounded-full bg-red-600'/>):<></>}
+                {menu === '/womens'? (<hr className='w-16 h-1 my-2 rounded-full bg-red-600'/>):<></>}
             </li>
             <li 
             className='flex flex-col items-center justify-center text-xl text-gray-600 cursor-pointer '
-            onClick={() => setMenu('kids')}
+            
             >
                 <Link to={'/kids'}>Kids</Link> 
-                {menu === 'kids'? (<hr className='w-16 h-1 my-2 rounded-full bg-red-600'/>): <></>}
+                {menu === '/kids'? (<hr className='w-16 h-1 my-2 rounded-full bg-red-600'/>): <></>}
             </li>
         </ul>
         <div className='flex justify-center items-center gap-5'>

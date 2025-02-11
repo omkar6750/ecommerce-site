@@ -1,6 +1,5 @@
 import React from 'react'
 import { Button } from './ui/button'
-import exclusive_image from '../assets/Frontend_Assets/exclusive_image.png'
 
 const Offers = () => {
   return (
@@ -13,7 +12,7 @@ const Offers = () => {
             <Button className='w-72 h-20 rounded-full bg-red-600 border-none text-white text-2xl font-medium cursor-pointer mt-8'>Check Now</Button>
         </div>
         <div className='flex flex-1 items-center justify-end pt-12 '>
-          <img src={exclusive_image} alt="" className='h-[60vh]' />
+          {/* <img src={exclusive_image} alt="" className='h-[60vh]' /> */}
         </div>
       </div>
     </div>

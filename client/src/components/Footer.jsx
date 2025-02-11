@@ -1,8 +1,8 @@
 import React from 'react'
-import footer_logo from '../assets/Frontend_Assets/logo_big.png'
-import instagram_icon from '../assets/Frontend_Assets/instagram_icon.png'
-import pinterest_icon from '../assets/Frontend_Assets/pinterest_icon.png'
-import whatsapp_icon from '../assets/Frontend_Assets/whatsapp_icon.png'
+import footer_logo from '../assets/Frontend_Assets/logo/logo_big.png'
+import instagram_icon from '../assets/Frontend_Assets/logo/instagram_icon.png'
+import pinterest_icon from '../assets/Frontend_Assets/logo/pinterest_icon.png'
+import whatsapp_icon from '../assets/Frontend_Assets/logo/whatsapp_icon.png'
 
 const Footer = () => {
   return (
