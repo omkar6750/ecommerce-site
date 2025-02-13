@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Input } from "@/components/ui/input";
+import { Input } from "./ui/input";
 import {
 	Select,
 	SelectContent,
@@ -8,9 +8,9 @@ import {
 	SelectLabel,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
-import MultipleSelector from "@/components/MultipleSelect";
-import { Button } from "@/components/ui/button";
+} from "./ui/select";
+import MultipleSelector from "./MultipleSelect";
+import { Button } from "./ui/button";
 import { CREATE_PRODUCT, UPLOAD_IMAGE } from "@/Utils/constants";
 import apiClient from "@/lib/apiClient";
 import { toast } from "sonner";
@@ -169,7 +169,7 @@ const CreateProduct = () => {
 	};
 
 	return (
-		<div className="flex h-[80vh] w-screen items-center justify-center p-2">
+		<div className="flex h-[90vh] w-screen items-center justify-center p-8">
 			<div className="grid h-full w-full grid-cols-3 space-x-10 border p-8">
 				<div className="flex flex-col space-y-10 border p-8">
 					<Input
@@ -179,10 +179,9 @@ const CreateProduct = () => {
 						onChange={(e) => {
 							setName(e.target.value);
 						}}
-						className="bg-[#d4ebff]"
 					></Input>
 					<Select onValueChange={(e) => setGender(e)}>
-						<SelectTrigger className="w-[180px] bg-[#d4ebff]">
+						<SelectTrigger className="w-[180px]">
 							<SelectValue placeholder="Gender" />
 						</SelectTrigger>
 						<SelectContent>
@@ -199,7 +198,7 @@ const CreateProduct = () => {
 						onChange={(e) => {
 							setNewPrice(e.target.value);
 						}}
-						className="bg-[#d4ebff]"
+						className=""
 					></Input>
 					<Input
 						type="number"
@@ -208,11 +207,11 @@ const CreateProduct = () => {
 						onChange={(e) => {
 							setOldPrice(e.target.value);
 						}}
-						className="bg-[#d4ebff]"
+						className=""
 					></Input>
 					<div className="rounded-md border">
 						<MultipleSelector
-							className="z-1000 rounded-lg border-none bg-[#d4ebff] py-2 text-black"
+							className="z-1000 rounded-lg border-none py-2 text-black"
 							defaultOptions={tags}
 							placeholder="Search Tags"
 							value={selectedTags}
@@ -231,71 +230,60 @@ const CreateProduct = () => {
 						}}
 						type="text"
 						placeholder="Description"
-						className="h-40 border border-[#d4ebff]"
+						className="h-40 border"
 					></textarea>
 				</div>
-				<div className="flex flex-col border p-8">
-					<div className="flex flex-col space-y-10">
-						<Input
-							type="text"
-							placeholder="SKU"
-							value={SKU}
-							onChange={(e) => {
-								setSKU(e.target.value);
-							}}
-							className="bg-[#d4ebff]"
-						></Input>
-						<Select onValueChange={(e) => setSize(e)}>
-							<SelectTrigger className="w-[180px] bg-[#d4ebff]">
-								<SelectValue placeholder="Size" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectGroup>
-									<SelectLabel> Adult</SelectLabel>
-									<SelectItem value="xs">XS</SelectItem>
-									<SelectItem value="s">S</SelectItem>
-									<SelectItem value="m">M</SelectItem>
-									<SelectItem value="l">L</SelectItem>
-									<SelectItem value="xl">XL</SelectItem>
-								</SelectGroup>
-								<SelectGroup>
-									<SelectLabel>Kids</SelectLabel>
-									<SelectItem value="k1">4-5Y</SelectItem>
-									<SelectItem value="k2">6-7Y</SelectItem>
-									<SelectItem value="k3">8-9Y</SelectItem>
-									<SelectItem value="k4">10-11Y</SelectItem>
-									<SelectItem value="k5">12-13Y</SelectItem>
-									<SelectItem value="k6">14-16Y</SelectItem>
-								</SelectGroup>
-							</SelectContent>
-						</Select>
-						<Input
-							type="text"
-							placeholder="color"
-							value={colour}
-							onChange={(e) => {
-								setColour(e.target.value);
-							}}
-							className="bg-[#d4ebff]"
-						/>
-						<Input
-							type="number"
-							placeholder="Inventory"
-							value={inventory}
-							onChange={(e) => {
-								setInventory(e.target.value);
-							}}
-							className="bg-[#d4ebff]"
-						/>
-					</div>
-					<div className="mt-60 flex flex-col space-y-10">
-						<Button onClick={handleNewVariant} className="bg-blue-500">
-							Add Variant
-						</Button>
-						<Button onClick={handleNewProduct} className="bg-blue-500">
-							Submit Product
-						</Button>
-					</div>
+				<div className="flex flex-col space-y-10 border p-8">
+					<Input
+						type="text"
+						placeholder="SKU"
+						value={SKU}
+						onChange={(e) => {
+							setSKU(e.target.value);
+						}}
+					></Input>
+					<Select onValueChange={(e) => setSize(e)}>
+						<SelectTrigger className="w-[180px]">
+							<SelectValue placeholder="Size" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectGroup>
+								<SelectLabel> Adult</SelectLabel>
+								<SelectItem value="xs">XS</SelectItem>
+								<SelectItem value="s">S</SelectItem>
+								<SelectItem value="m">M</SelectItem>
+								<SelectItem value="l">L</SelectItem>
+								<SelectItem value="xl">XL</SelectItem>
+							</SelectGroup>
+							<SelectGroup>
+								<SelectLabel>Kids</SelectLabel>
+								<SelectItem value="k1">4-5Y</SelectItem>
+								<SelectItem value="k2">6-7Y</SelectItem>
+								<SelectItem value="k3">8-9Y</SelectItem>
+								<SelectItem value="k4">10-11Y</SelectItem>
+								<SelectItem value="k5">12-13Y</SelectItem>
+								<SelectItem value="k6">14-16Y</SelectItem>
+							</SelectGroup>
+						</SelectContent>
+					</Select>
+					<Input
+						type="text"
+						placeholder="color"
+						value={colour}
+						onChange={(e) => {
+							setColour(e.target.value);
+						}}
+					/>
+					<Input
+						type="number"
+						placeholder="Inventory"
+						value={inventory}
+						onChange={(e) => {
+							setInventory(e.target.value);
+						}}
+					/>
+					<Button onClick={handleNewVariant}>Add Variant</Button>
+					<Button onClick={handleNewProduct}>Submit Product</Button>
 				</div>
 				<div className="border">
 					<div className="flex h-full w-full items-center justify-center p-2">
@@ -318,9 +306,12 @@ const CreateProduct = () => {
 								<button
 									type="button"
 									onClick={handleAttachmentClick}
-									className="rounded-lg bg-blue-500 p-7 text-3xl text-white"
+									className="rounded-lg bg-blue-500 px-4 py-2 text-white"
 								>
-									<span>Browse</span>
+									<p>Drag & Drop here</p>
+									<p>
+										or <span>Browse</span>
+									</p>
 								</button>
 								<input
 									type="file"

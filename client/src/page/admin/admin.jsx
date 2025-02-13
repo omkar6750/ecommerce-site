@@ -1,38 +1,49 @@
-import Item from '@/components/Item';
-import { Button } from '@/components/ui/button';
-import React, { useEffect, useState } from 'react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Button } from "@/components/ui/button";
+import React, { useState } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const AdminPanel = () => {
-    const navigate = useNavigate()
-    const [editProduct, setEditProduct] = useState()
+	const navigate = useNavigate();
+	const handleNavigate = (url) => {
+		navigate(`/admin/${url}`);
+	};
 
-    const handleCreateProduct = () => {
-        navigate('/admin/create-product');
-    };
-
-    const handleEditProduct = () => {
-        navigate('/admin/edit-product');
-        setEditProduct(true)
-    };
-
-    const handleDeleteProduct =() => {
-        navigate('/admin/delete-product')
-    }
-    return (
-        <div>
-            <h1 className='text-8xl font-bold text-slate-900 text-center m-14 '>Admin Panel</h1>
-            <hr />
-            <div className='flex h-[70vh]  items-center justify-between gap-6'>
-                <div className='flex flex-col gap-16 items-center justify-center w-1/3 '>
-                    <Button className="text-white bg-amber-600 text-4xl p-10 rounded-lg w-96" onClick={handleCreateProduct}>Create Product</Button>
-                    <Button className="text-white bg-amber-600 text-4xl p-10 rounded-lg w-96" onClick={handleEditProduct}>Edit Product</Button>
-                    <Button className="text-white bg-amber-600 text-4xl p-10 rounded-lg w-96" onClick={handleDeleteProduct}>Delete Product</Button>
-                </div>
-                <Outlet />
-            </div> 
-        </div>
-    );
+	return (
+		<div className="h-screen w-full">
+			<div className="flex w-full items-center justify-around">
+				<h1 className="m-5 text-center text-3xl font-semibold">Admin page</h1>
+				<div className="w-2/3 space-x-10">
+					<Button
+						onClick={() => {
+							handleNavigate("create");
+						}}
+						className="bg-[#0090ea] p-7 text-2xl"
+					>
+						Create Product
+					</Button>
+					<Button
+						onClick={() => {
+							handleNavigate("edit");
+						}}
+						className="bg-[#0090ea] p-7 text-2xl"
+					>
+						Edit Product
+					</Button>
+					<Button
+						onClick={() => {
+							handleNavigate("delete");
+						}}
+						className="bg-[#0090ea] p-7 text-2xl"
+					>
+						Delete Product
+					</Button>
+				</div>
+			</div>
+			<div>
+				<Outlet />
+			</div>
+		</div>
+	);
 };
 
 export default AdminPanel;

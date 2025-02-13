@@ -1,58 +1,62 @@
-import React, { useState } from 'react'
-import logo from '../assets/Frontend_Assets/logo/logo.png'
-import { ShoppingCart } from 'lucide-react'
-import { Link, useLocation } from 'react-router-dom'
-import { useAppStore } from '@/Store'
-
+import React, { useState } from "react";
+import { CircleUserRound, ShoppingCart } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { useAppStore } from "@/Store";
+import AEON_logo_1 from "@/assets/Frontend_Assets/aeon_logo_1.png";
+import AEON_logo_2 from "@/assets/Frontend_Assets/aeon_logo_2.png";
+import AEON_logo_3 from "@/assets/Frontend_Assets/aeon_logo_3.png";
 
 function Navbar() {
-    const {cart} = useAppStore()
-    const location = useLocation();
-    const menu = location.pathname;
-    
-    return (
-    <div className='flex justify-around border-b-2 p-4'>
-        <div  className=' flex items-center '>
-            <img src={logo} alt="" />
-            <p className='text-3xl text-[#171717] font-semibold px-2'>AEON</p>
-        </div>
-        <ul className='justify-around w-80 items-center flex list-none '>
-            <li 
-            className='flex flex-col items-center justify-center text-xl text-gray-600 cursor-pointer '
-            >
-                <Link to={'/'}>Shop</Link> 
-                {menu === '/'? (<hr className='w-16 h-1 my-2 rounded-full bg-red-600'/>):<></>}
-            </li>
-            
-            <li 
-            className='flex flex-col items-center justify-center text-xl text-gray-600 cursor-pointer '
-            >
-                <Link to={'/mens'}>Mens</Link> 
-                {menu === '/mens'? (<hr className='w-16 h-1 my-2 rounded-full bg-red-600 '/>):<></>}
-            </li>
-            <li 
-            className='flex flex-col items-center justify-center text-xl text-gray-600 cursor-pointer '
-            >
-                <Link to={'/womens'}>Womens</Link> 
-                {menu === '/womens'? (<hr className='w-16 h-1 my-2 rounded-full bg-red-600'/>):<></>}
-            </li>
-            <li 
-            className='flex flex-col items-center justify-center text-xl text-gray-600 cursor-pointer '
-            
-            >
-                <Link to={'/kids'}>Kids</Link> 
-                {menu === '/kids'? (<hr className='w-16 h-1 my-2 rounded-full bg-red-600'/>): <></>}
-            </li>
-        </ul>
-        <div className='flex justify-center items-center gap-5'>
-            <Link to={'/auth'}>
-            <button className='border-[1px] rounded-full text-2xl text-center text-gray-600 h-16 w-44 cursor-pointer active:bg-slate-100/25'>Login</button>
-            </Link>
-            <Link to={'/cart'}><ShoppingCart className=' cursor-pointer' size={35} /></Link>
-            <div className='w-5 h-5 mb-8 text-center text-sm -ml-7 text-white rounded-full bg-red-700 '>{cart.length}</div>
-        </div>
-    </div>
-  )
+	const { cart } = useAppStore();
+	const location = useLocation();
+	const menu = location.pathname;
+
+	return (
+		<nav className="fixed left-0 top-0 z-20 flex w-full justify-around bg-transparent bg-gradient-to-b from-black/35 to-transparent p-2">
+			<div className="flex items-center">
+				<img src={AEON_logo_1} alt="" className="h-11 w-72 object-cover object-center" />
+				{/* <p className="px-2 font-serif text-4xl font-semibold text-black">
+          AEON
+        </p> */}
+			</div>
+			<ul className="flex w-1/5 list-none items-center justify-around">
+				{[
+					["HOME", "/"],
+					["MEN", "/mens"],
+					["WOMEN", "/womens"],
+					["KIDS", "/kids"],
+				].map(([title, url]) => (
+					<li
+						key={title}
+						className="flex cursor-pointer flex-col items-center justify-center text-2xl font-semibold text-white"
+					>
+						<a
+							href={url}
+							className="text-shadow-sm rounded-lg px-3 py-2 font-semibold text-white"
+						>
+							{title}
+						</a>
+						{menu === `${url}` ? (
+							<hr className="h-[2px] w-16 rounded-full bg-white" />
+						) : (
+							<></>
+						)}
+					</li>
+				))}
+			</ul>
+			<div className="flex items-center justify-center gap-5">
+				<Link to={"/auth"}>
+					<CircleUserRound size={30} className="font-extralight text-white" />
+				</Link>
+				<Link to={"/cart"}>
+					<ShoppingCart className="cursor-pointer text-white" size={30} />
+				</Link>
+				<div className="bg-Maroon -ml-7 mb-8 h-5 w-5 rounded-full text-center text-sm text-white">
+					{cart.length}
+				</div>
+			</div>
+		</nav>
+	);
 }
 
-export default Navbar
+export default Navbar;

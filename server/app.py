@@ -13,7 +13,8 @@ from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from flask import send_from_directory, current_app
 from flask import make_response
-from datetime import timedelta
+from datetime import timedelta 
+from datetime import datetime, timezone
 
 
 
@@ -54,6 +55,11 @@ migrate = Migrate(app, db)
 
 
 # ------------------------- Database Models ------------------------- #
+product_tags = db.Table('product_tags',
+    db.Column('product_id', db.String(36), db.ForeignKey('product.product_id'), primary_key=True),
+    db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True)
+)
+
 
 class User(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
@@ -66,26 +72,56 @@ class User(db.Model):
     gender = db.Column(db.String(10), nullable=True)
     address = db.Column(db.Text, nullable=True)
     orders = db.relationship('Order', backref='user', lazy=True)
+    cart_items = db.relationship('Cart', backref='user', lazy=True)  
     is_admin = db.Column(db.Boolean, default=False) 
-    profile_setup = db.Column(db.Boolean, default=False) 
+    profile_setup = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
 
 class Product(db.Model):
     product_id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     name = db.Column(db.String(100), nullable=False)
-    size = db.Column(db.String(50), nullable=True)
     tags = db.Column(db.Text, nullable=True)  
     gender = db.Column(db.String(10), nullable=True)
-    colour = db.Column(db.String(50), nullable=True)
     old_price = db.Column(db.Float, nullable=True)
     new_price = db.Column(db.Float, nullable=False)
     product_image = db.Column(db.String(255), nullable=True)
     description = db.Column(db.Text, nullable=True)
+    tags = db.relationship('Tag', secondary=product_tags, backref=db.backref('products', lazy='dynamic'), lazy='dynamic')
+    variants = db.relationship('ProductVariant', backref='product', lazy=True)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
+
+class Tag(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)
+
+class ProductVariant(db.Model):
+    sku = db.Column(db.String(50), primary_key=True)  # Using SKU as primary key
+    product_id = db.Column(db.String(36), db.ForeignKey('product.product_id'), nullable=False)
+    size = db.Column(db.String(50), nullable=True)
+    colour = db.Column(db.String(50), nullable=True)
+    inventory_count = db.Column(db.Integer, nullable=False, default=0)
+
+class Cart(db.Model):
+    cart_id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)
+    product_id = db.Column(db.String(36), db.ForeignKey("product.product_id"), nullable=False)
+    variant_sku = db.Column(db.String(50), db.ForeignKey("product_variant.sku",  name="fk_cart_variant_sku"), nullable=True)
+    quantity = db.Column(db.Integer, nullable=False)
+    variant = db.relationship("ProductVariant", backref=db.backref("cart", lazy=True))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
 
 class Order(db.Model):
     order_id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     order_value = db.Column(db.Float, nullable=False)
     address = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)
+    order_items = db.relationship("OrderItem", back_populates="order")
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
+
 
 class OrderItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -93,7 +129,10 @@ class OrderItem(db.Model):
     product_id = db.Column(db.String(36), db.ForeignKey("product.product_id"), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
 
-    order = db.relationship("Order", backref=db.backref("order_items", lazy=True))
+    order = db.relationship("Order", back_populates="order_items")
+
+
+
 
 # ------------------------- API Endpoints ------------------------- #
 
@@ -109,6 +148,7 @@ def signup():
         data = request.get_json()
         email = data.get("email")
         password = data.get("password")
+        print(data)
 
         if not email or not password:
             return jsonify({"error": "email-password-required"}), 400
@@ -252,48 +292,65 @@ def profile_creation():
 # Product Management (Admin Only)
 @app.route('/create_product', methods=['POST'])
 def create_product():
-    verify_jwt_in_request(optional=False)
-    user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    print("This i suser:",user)
-
-    if not user or not user.is_admin:
-        return jsonify({"error": "Admin access required"}), 403
-
     data = request.get_json()
+    if not data:
+        return jsonify({'error': 'No data provided'}), 400
 
-    # Create new product
-    new_product = Product(
-        name=data["name"],
-        size=data["size"],
-        tags=data["tags"],  
-        gender=data["gender"],
-        colour=data["colour"],
-        old_price=data["old_price"],
-        new_price=data["new_price"],
-        product_image=data["product_image"],
-        description=data["description"]
-    )
+    # Required fields: name and new_price
+    name = data.get('name')
+    new_price = data.get('new_price')
+    print(data)
+    if not name or new_price is None:
+        return jsonify({'error': 'Name and new_price are required'}), 400
 
-    db.session.add(new_product)
-    db.session.commit()
+    try:
+        # Create the Product instance with basic fields
+        product = Product(
+            name=name,
+            gender=data.get('gender'),
+            old_price=data.get('old_price'),
+            new_price=new_price,
+            product_image=data.get('product_image'),
+            description=data.get('description')
+            # created_at and updated_at will be set automatically
+        )
 
+        # Handle Tags: Expecting tags to be sent as an array of tag names
+        tags_data = data.get('tags', [])
+        for tag_name in tags_data:
+            # Try to find an existing tag with that name
+            tag = Tag.query.filter_by(name=tag_name).first()
+            if not tag:
+                # If not found, create a new tag
+                tag = Tag(name=tag_name)
+                db.session.add(tag)
+                # Commit later so that tag gets an ID, if needed
+            product.tags.append(tag)
 
-    return jsonify({
-        "message": "Product created successfully",
-        "product": {
-            "id": new_product.product_id,
-            "name": new_product.name,
-            "size": new_product.size,
-            "tags": new_product.tags,
-            "gender": new_product.gender,
-            "colour": new_product.colour,
-            "old_price": new_product.old_price,
-            "new_price": new_product.new_price,
-            "product_image": new_product.product_image,
-            "description": new_product.description
-        }
-    }), 201
+        # Handle Variants: Expecting an array of variant objects
+        variants_data = data.get('variants', [])
+        for variant_data in variants_data:
+            variant = ProductVariant(
+                sku=variant_data.get('sku'),
+                size=variant_data.get('size'),
+                colour=variant_data.get('colour'),
+                inventory_count=variant_data.get('inventory_count', 0),
+                product_id=product.product_id  # automatically link the variant to the product
+            )
+            product.variants.append(variant)
+            db.session.add(variant)
+
+        db.session.add(product)
+        db.session.commit()
+
+        return jsonify({
+            'message': 'Product created successfully',
+            'product_id': product.product_id
+        }), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/edit_product', methods=['PUT'])
 def edit_product():
