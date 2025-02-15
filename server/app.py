@@ -15,6 +15,8 @@ from flask import send_from_directory, current_app
 from flask import make_response
 from datetime import timedelta 
 from datetime import datetime, timezone
+from sqlalchemy import func
+
 
 
 
@@ -29,7 +31,7 @@ app = Flask(__name__)
 
 CORS(app, resources={r"/*": {
     "origins": os.environ.get('CORS_URI'),
-    "methods": ["GET", "POST", "PUT", "DELETE"],
+    "methods": ["GET", "POST", "PUT", "DELETE", "PATCH"],
     "allow_headers": ["Content-Type", "Authorization"],
     "supports_credentials": True  
 }})
@@ -352,65 +354,83 @@ def create_product():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
-@app.route('/edit_product', methods=['PUT'])
-def edit_product():
-    verify_jwt_in_request(optional=True)
-
-    user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-
-    if not user or not user.is_admin:
-        return jsonify({"error": "Admin access required"}), 403
-
+@app.route("/edit_product/<string:product_id>", methods=["PATCH"])
+def edit_product(product_id):
     data = request.get_json()
-    product_id = data.get("product_id")  
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
 
-    if not product_id:
-        return jsonify({"error": "Missing product_id"}), 400
-
-    product = Product.query.get(product_id)
+    # Find the product by product_id
+    product = Product.query.filter_by(product_id=product_id).first()
     if not product:
         return jsonify({"error": "Product not found"}), 404
 
-    # Update product details
-    for key in ["name", "size", "tags", "gender", "colour", "old_price", "new_price", "description"]:
-        if key in data:
-            setattr(product, key, data[key])
+    # Update top-level fields if provided in payload
+    product.name = data.get("name", product.name)
+    product.gender = data.get("gender", product.gender)
+    product.old_price = data.get("old_price", product.old_price)
+    product.new_price = data.get("new_price", product.new_price)
+    product.product_image = data.get("product_image", product.product_image)
+    product.description = data.get("description", product.description)
 
-    db.session.commit()
+    # Update Tags: Clear existing tags and add new ones (assuming payload contains an array of tag names)
+    if "tags" in data:
+        product.tags = []  # Clear current associations (without deleting Tag objects)
+        for tag_name in data["tags"]:
+            tag = Tag.query.filter_by(name=tag_name).first()
+            if not tag:
+                tag = Tag(name=tag_name)
+                db.session.add(tag)
+            product.tags.append(tag)
 
-    return jsonify({
-        "message": "Product updated successfully",
-        "product": {
-            "id": product.product_id,
-            "name": product.name,
-            "size": product.size,
-            "tags": product.tags,
-            "gender": product.gender,
-            "colour": product.colour,
-            "old_price": product.old_price,
-            "new_price": product.new_price,
-            "description": product.description,
-        }
-    }), 200
+    # Update Variants: Remove existing variants and add new ones from payload
+    if "variants" in data:
+        # Delete existing variants associated with this product
+        for variant in product.variants:
+            db.session.delete(variant)
+        product.variants = []  # Clear relationship
+        for variant_data in data["variants"]:
+            variant = ProductVariant(
+                sku=variant_data.get("sku"),
+                size=variant_data.get("size"),
+                colour=variant_data.get("colour"),
+                inventory_count=variant_data.get("inventory_count", 0),
+                product_id=product.product_id  # Link variant to this product
+            )
+            product.variants.append(variant)
+            db.session.add(variant)
+
+    try:
+        db.session.commit()
+        return jsonify({
+            "message": "Product updated successfully",
+            "product_id": product.product_id
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 
-@app.route('/delete_product', methods=['DELETE'])
-def delete_product():
+@app.route('/delete_product/<string:product_id>', methods=['DELETE'])
+def delete_product(product_id):
     verify_jwt_in_request(optional=True)
 
-    user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    if not user or not user.is_admin:
-        return jsonify({"error": "Admin access required"}), 403
+    # user_id = get_jwt_identity()
+    # user = User.query.get(user_id)
+    # print(user_id)
+    # if not user or not user.is_admin:
+    #     return jsonify({"error": "Admin access required"}), 403
     
-    data = request.get_json()
-    product_id = data.get("product_id")
-
+    
+    print(product_id)
     product = Product.query.get(product_id)
     if not product:
         return jsonify({"error": "Product not found"}), 404
-    print(product)
+
+    for variant in product.variants:
+        db.session.delete(variant)
+    
+    product.tags = []
 
     if product.product_image:
         upload_folder = app.config.get("UPLOAD_FOLDER", "uploads")
@@ -514,48 +534,6 @@ def order_generated(order_id):
 
 
 # Product Fetching
-@app.route("/fetch_products", methods=["POST"])
-def fetch_products():
-    page = request.args.get("page", 1, type=int)
-    per_page = 10
-
-    # Get filter data from the request JSON body
-    verify_jwt_in_request(optional=True)
-
-    data = request.get_json() or {}
-    filters = data.get("filters", {})
-
-    # Start with the base query
-    query = Product.query
-
-    # Dynamically add filters to the query
-    for key, value in filters.items():
-        if hasattr(Product, key):
-            query = query.filter(getattr(Product, key) == value)
-
-    # The query is executed here with pagination
-    paginated_products = query.paginate(page=page, per_page=per_page, error_out=False)
-
-    products_list = paginated_products.items
-    random.shuffle(products_list)
-
-    products = [{
-        "product_id": product.product_id,
-        "name": product.name,
-        "size": product.size,
-        "tags": product.tags,
-        "gender": product.gender,
-        "colour": product.colour,
-        "old_price": product.old_price,
-        "new_price": product.new_price,
-        "product_image": product.product_image,
-        "description": product.description
-    } for product in paginated_products.items]
-
-    return jsonify({
-        "products": products,
-        "total_pages": paginated_products.pages
-    }), 200
 
 @app.route("/fetch_single_product/<string:product_id>", methods=["GET"])
 def fetch_single_product(product_id):
@@ -579,6 +557,70 @@ def fetch_single_product(product_id):
     }
 
     return jsonify(product_data), 200
+
+@app.route("/api/products" ,methods=["POST"])
+def data_table_products():
+     # Get pagination parameters from query parameters; default page=1, per_page=10
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
+
+    # Optionally verify JWT (adjust as needed)
+    verify_jwt_in_request(optional=True)
+
+    # Get filter data from the request JSON body
+    data = request.get_json() or {}
+    filters = data.get("filters", {})
+
+    # Start with the base query
+    query = Product.query
+
+    # Dynamically apply filters for each provided key
+    for key, value in filters.items():
+        if hasattr(Product, key) and key not in ["sort", "randomPage"]:
+            query = query.filter(getattr(Product, key) == value)
+
+    sort_order = filters.get("sort")
+    if sort_order == "newest":
+        query = query.order_by(Product.created_at.desc())
+    elif sort_order == "random":
+        query = query.order_by(func.random())
+
+    if filters.get("randomPage", False):
+        total_items = query.count()
+        total_pages = (total_items + per_page - 1) // per_page
+        page = random.randint(1, total_pages)
+
+    # Paginate the query
+    paginated_products = query.paginate(page=page, per_page=per_page, error_out=False)
+
+    # Format each product to include its variants and tags (converted to strings)
+    products = [{
+        "product_id": product.product_id,
+        "name": product.name,
+        "gender": product.gender,
+        "old_price": product.old_price,
+        "new_price": product.new_price,
+        "product_image": product.product_image,
+        "description": product.description,
+        "tags": [tag.name for tag in product.tags],  # Convert Tag objects to strings
+        "variants": [{
+            "sku": variant.sku,
+            "size": variant.size,
+            "colour": variant.colour,
+            "inventory_count": variant.inventory_count
+        } for variant in product.variants]
+    } for product in paginated_products.items]
+
+    # Return data in a standard format with meta information
+    return jsonify({
+        "data": products,
+        "meta": {
+            "totalPages": paginated_products.pages,
+            "currentPage": page,
+            "perPage": per_page,
+            "totalItems": paginated_products.total
+        }
+    }), 200
 
 
 

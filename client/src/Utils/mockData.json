@@ -1,0 +1,248 @@
+[
+	{
+		"product_id": "prod-1",
+		"name": "Classic Polo Shirt",
+		"gender": "male",
+		"old_price": 50.0,
+		"new_price": 40.0,
+		"product_image": "https://example.com/images/classic-polo.jpg",
+		"description": "A timeless classic polo shirt made from premium cotton.",
+		"tags": ["polo", "casual", "summer"],
+		"variants": [
+			{
+				"sku": "POLO-M-RED",
+				"size": "M",
+				"colour": "Red",
+				"inventory_count": 20
+			},
+			{
+				"sku": "POLO-L-BLUE",
+				"size": "L",
+				"colour": "Blue",
+				"inventory_count": 15
+			}
+		]
+	},
+	{
+		"product_id": "prod-2",
+		"name": "Vintage Denim Jacket",
+		"gender": "female",
+		"old_price": 80.0,
+		"new_price": 65.0,
+		"product_image": "https://example.com/images/vintage-denim-jacket.jpg",
+		"description": "A stylish vintage denim jacket perfect for a retro look.",
+		"tags": ["jacket", "denim", "vintage"],
+		"variants": [
+			{
+				"sku": "DJKT-S-BLU",
+				"size": "S",
+				"colour": "Blue",
+				"inventory_count": 10
+			},
+			{
+				"sku": "DJKT-M-BLU",
+				"size": "M",
+				"colour": "Blue",
+				"inventory_count": 8
+			}
+		]
+	},
+	{
+		"product_id": "prod-3",
+		"name": "Modern Running Shorts",
+		"gender": "unisex",
+		"old_price": 35.0,
+		"new_price": 30.0,
+		"product_image": "https://example.com/images/modern-running-shorts.jpg",
+		"description": "Lightweight and breathable running shorts for active lifestyles.",
+		"tags": ["shorts", "sports", "activewear"],
+		"variants": [
+			{
+				"sku": "SHORT-S-BLK",
+				"size": "S",
+				"colour": "Black",
+				"inventory_count": 25
+			},
+			{
+				"sku": "SHORT-M-BLK",
+				"size": "M",
+				"colour": "Black",
+				"inventory_count": 20
+			}
+		]
+	},
+	{
+		"product_id": "prod-4",
+		"name": "Kids Graphic T-Shirt",
+		"gender": "kid",
+		"old_price": 25.0,
+		"new_price": 20.0,
+		"product_image": "https://example.com/images/kids-graphic-tshirt.jpg",
+		"description": "A fun and colorful graphic t-shirt for kids.",
+		"tags": ["tshirt", "graphic", "kids"],
+		"variants": [
+			{
+				"sku": "KT-XS-GRN",
+				"size": "XS",
+				"colour": "Green",
+				"inventory_count": 30
+			},
+			{
+				"sku": "KT-S-GRN",
+				"size": "S",
+				"colour": "Green",
+				"inventory_count": 28
+			}
+		]
+	},
+	{
+		"product_id": "prod-5",
+		"name": "Casual Button-Down Shirt",
+		"gender": "male",
+		"old_price": 60.0,
+		"new_price": 50.0,
+		"product_image": "https://example.com/images/casual-button-down.jpg",
+		"description": "A comfortable and stylish button-down shirt suitable for casual wear.",
+		"tags": ["shirt", "casual", "office"],
+		"variants": [
+			{
+				"sku": "SHRT-M-NAVY",
+				"size": "M",
+				"colour": "Navy",
+				"inventory_count": 18
+			},
+			{
+				"sku": "SHRT-L-NAVY",
+				"size": "L",
+				"colour": "Navy",
+				"inventory_count": 12
+			}
+		]
+	},
+	{
+		"product_id": "prod-6",
+		"name": "Slim Fit Jeans",
+		"gender": "male",
+		"old_price": 70.0,
+		"new_price": 65.0,
+		"product_image": "https://example.com/images/slim-fit-jeans.jpg",
+		"description": "Modern slim fit jeans that offer comfort and style.",
+		"tags": ["jeans", "denim", "casual"],
+		"variants": [
+			{
+				"sku": "JEANS-32-BLU",
+				"size": "32",
+				"colour": "Blue",
+				"inventory_count": 22
+			},
+			{
+				"sku": "JEANS-34-BLU",
+				"size": "34",
+				"colour": "Blue",
+				"inventory_count": 20
+			}
+		]
+	},
+	{
+		"product_id": "prod-7",
+		"name": "Printed Summer Dress",
+		"gender": "female",
+		"old_price": 80.0,
+		"new_price": 70.0,
+		"product_image": "https://example.com/images/printed-summer-dress.jpg",
+		"description": "A light and airy printed dress perfect for summer days.",
+		"tags": ["dress", "summer", "printed"],
+		"variants": [
+			{
+				"sku": "DRSS-S-RED",
+				"size": "S",
+				"colour": "Red",
+				"inventory_count": 10
+			},
+			{
+				"sku": "DRSS-M-RED",
+				"size": "M",
+				"colour": "Red",
+				"inventory_count": 8
+			}
+		]
+	},
+	{
+		"product_id": "prod-8",
+		"name": "Chino Pants",
+		"gender": "unisex",
+		"old_price": 55.0,
+		"new_price": 45.0,
+		"product_image": "https://example.com/images/chino-pants.jpg",
+		"description": "Versatile chino pants suitable for both casual and semi-formal occasions.",
+		"tags": ["pants", "chino", "casual"],
+		"variants": [
+			{
+				"sku": "CHINO-30-KHAKI",
+				"size": "30",
+				"colour": "Khaki",
+				"inventory_count": 15
+			},
+			{
+				"sku": "CHINO-32-KHAKI",
+				"size": "32",
+				"colour": "Khaki",
+				"inventory_count": 18
+			}
+		]
+	},
+	{
+		"product_id": "prod-9",
+		"name": "Cozy Hoodie",
+		"gender": "unisex",
+		"old_price": 65.0,
+		"new_price": 55.0,
+		"product_image": "https://example.com/images/cozy-hoodie.jpg",
+		"description": "A soft and comfortable hoodie perfect for cooler weather.",
+		"tags": ["hoodie", "casual", "cozy"],
+		"variants": [
+			{
+				"sku": "HOODIE-M-GRY",
+				"size": "M",
+				"colour": "Grey",
+				"inventory_count": 12
+			},
+			{
+				"sku": "HOODIE-L-GRY",
+				"size": "L",
+				"colour": "Grey",
+				"inventory_count": 10
+			}
+		]
+	},
+	{
+		"product_id": "prod-10",
+		"name": "Basic Crew Neck T-Shirt",
+		"gender": "unisex",
+		"old_price": 20.0,
+		"new_price": 15.0,
+		"product_image": "https://example.com/images/basic-crew-neck-tshirt.jpg",
+		"description": "A versatile, everyday crew neck t-shirt made from soft, breathable fabric.",
+		"tags": ["tshirt", "basic", "casual"],
+		"variants": [
+			{
+				"sku": "CREW-XS-WHT",
+				"size": "XS",
+				"colour": "White",
+				"inventory_count": 40
+			},
+			{
+				"sku": "CREW-S-WHT",
+				"size": "S",
+				"colour": "White",
+				"inventory_count": 35
+			},
+			{
+				"sku": "CREW-M-WHT",
+				"size": "M",
+				"colour": "White",
+				"inventory_count": 30
+			}
+		]
+	}
+]

@@ -14,71 +14,14 @@ import { Button } from "@/components/ui/button";
 import { CREATE_PRODUCT, UPLOAD_IMAGE } from "@/Utils/constants";
 import apiClient from "@/lib/apiClient";
 import { toast } from "sonner";
-
-const tags = [
-	{
-		label: "TSH",
-		value: "1",
-	},
-	{
-		label: "SHT",
-		value: "2",
-	},
-	{
-		label: "PNT",
-		value: "3",
-	},
-	{
-		label: "JKT",
-		value: "4",
-	},
-	{
-		label: "SLL",
-		value: "5",
-	},
-	{
-		label: "HSL",
-		value: "6",
-	},
-	{
-		label: "SWT",
-		value: "7",
-	},
-	{
-		label: "PUL",
-		value: "8",
-	},
-	{
-		label: "ZIP",
-		value: "9",
-	},
-	{
-		label: "CRW",
-		value: "10",
-	},
-	{
-		label: "VNK",
-		value: "11",
-	},
-	{
-		label: "POL",
-		value: "12",
-	},
-	{
-		label: "TTN",
-		value: "13",
-	},
-	{
-		label: "HOD",
-		value: "14",
-	},
-];
+import tags from "@/Utils/tags.json";
+import { Trash2 } from "lucide-react";
 
 const CreateProduct = () => {
 	const [name, setName] = useState("");
 	const [gender, setGender] = useState("");
-	const [newPrice, setNewPrice] = useState(0);
-	const [oldPrice, setOldPrice] = useState(0);
+	const [newPrice, setNewPrice] = useState(null);
+	const [oldPrice, setOldPrice] = useState(null);
 	const [description, setDescription] = useState("");
 	const [image, setImage] = useState(null);
 	const [url, setUrl] = useState("");
@@ -100,7 +43,17 @@ const CreateProduct = () => {
 	const formReset = () => {
 		setName("");
 		setGender("");
+		setDescription("");
+		setImage(null);
+		setOldPrice(0);
+		setNewPrice(0);
+		setUrl("");
+		setSelectedTags([]);
+		setVariant([]);
+		setSKU("");
 		setColour("");
+		setSize("");
+		setInventory(0);
 	};
 
 	const handleFileChange = (e) => {
@@ -126,12 +79,17 @@ const CreateProduct = () => {
 		toast.success("New Variant Created");
 	};
 
+	const deleteVariant = (skuToDelete) => {
+		setVariant((prev) => prev.filter((variant) => variant.sku !== skuToDelete));
+		toast.success("Variant Deleted");
+	};
+
 	const handleNewProduct = async () => {
 		const payload = {
 			name: name,
 			gender: gender,
-			old_price: oldPrice,
-			new_price: newPrice,
+			old_price: oldPrice ? oldPrice : null,
+			new_price: newPrice ? newPrice : null,
 			description: description,
 			tags: selectedTags.map((tag) => tag.label),
 			variants: variant,
@@ -157,7 +115,8 @@ const CreateProduct = () => {
 						"Content-Type": "multipart/form-data",
 					},
 				});
-				if (imageResponse.status === 201) {
+				if (imageResponse.status === 200) {
+					formReset();
 					toast.success("product created successfully");
 				}
 			} else {
@@ -169,7 +128,7 @@ const CreateProduct = () => {
 	};
 
 	return (
-		<div className="flex h-[80vh] w-screen items-center justify-center p-2">
+		<div className="flex h-[90vh] w-screen flex-col items-center justify-center p-2">
 			<div className="grid h-full w-full grid-cols-3 space-x-10 border p-8">
 				<div className="flex flex-col space-y-10 border p-8">
 					<Input
@@ -234,7 +193,7 @@ const CreateProduct = () => {
 						className="h-40 border border-[#d4ebff]"
 					></textarea>
 				</div>
-				<div className="flex flex-col border p-8">
+				<div className="flex h-full flex-col border p-8">
 					<div className="flex flex-col space-y-10">
 						<Input
 							type="text"
@@ -288,12 +247,27 @@ const CreateProduct = () => {
 							className="bg-[#d4ebff]"
 						/>
 					</div>
-					<div className="mt-60 flex flex-col space-y-10">
+					<div className="h-full">
+						{variant.map((item, i) => (
+							<div key={i} className="flex space-x-10">
+								<div>{item.sku}</div>
+								<div>{item.size}</div>
+								<div>{item.colour}</div>
+								<div>{item.inventory_count}</div>
+								<button>
+									<Trash2
+										size={15}
+										onClick={() => {
+											deleteVariant(item.sku);
+										}}
+									/>
+								</button>
+							</div>
+						))}
+					</div>
+					<div className="flex flex-col space-y-10">
 						<Button onClick={handleNewVariant} className="bg-blue-500">
 							Add Variant
-						</Button>
-						<Button onClick={handleNewProduct} className="bg-blue-500">
-							Submit Product
 						</Button>
 					</div>
 				</div>
@@ -314,7 +288,7 @@ const CreateProduct = () => {
 								</button>
 							</div>
 						) : (
-							<div className="upload-container">
+							<div className="relative flex h-full flex-col items-center justify-center">
 								<button
 									type="button"
 									onClick={handleAttachmentClick}
@@ -334,6 +308,9 @@ const CreateProduct = () => {
 					</div>
 				</div>
 			</div>
+			<Button onClick={handleNewProduct} className="m-5 w-1/3 bg-blue-500 p-5">
+				Submit Product
+			</Button>
 		</div>
 	);
 };

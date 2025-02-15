@@ -1,0 +1,74 @@
+[
+	{
+		"label": "TSH",
+		"value": "1"
+	},
+	{
+		"label": "SHT",
+		"value": "2"
+	},
+	{
+		"label": "PNT",
+		"value": "3"
+	},
+	{
+		"label": "JKT",
+		"value": "4"
+	},
+	{
+		"label": "SLL",
+		"value": "5"
+	},
+	{
+		"label": "HSL",
+		"value": "6"
+	},
+	{
+		"label": "SWT",
+		"value": "7"
+	},
+	{
+		"label": "PUL",
+		"value": "8"
+	},
+	{
+		"label": "ZIP",
+		"value": "9"
+	},
+	{
+		"label": "CRW",
+		"value": "10"
+	},
+	{
+		"label": "VNK",
+		"value": "11"
+	},
+	{
+		"label": "POL",
+		"value": "12"
+	},
+	{
+		"label": "TTN",
+		"value": "13"
+	},
+	{
+		"label": "HOD",
+		"value": "14"
+	},
+	{
+		"label": "JNS",
+		"value": "15"
+	},
+	{
+		"label": "PLN",
+		"value": "16"
+	},
+	{
+		"label": "GRP",
+		"value": "17"
+	},
+	{
+		"label": "FSL",
+		"value": "18"
+	}
+]

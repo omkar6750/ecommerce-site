@@ -10,7 +10,6 @@ import Layout from "./page/layout";
 import AdminPanel from "./page/admin/admin";
 import CreateProduct from "./page/admin/createProduct.jsx";
 import EditProduct from "./page/admin/editProduct.jsx";
-import DeleteProduct from "./page/admin/deleteProduct";
 import ExperimentalUI from "./page/experimental";
 import MensPage from "./page/home/men";
 import WomensPage from "./page/home/women";
@@ -28,7 +27,7 @@ function App() {
 			<Routes>
 				<Route path={"/"} element={<Layout />}>
 					<Route index element={<Shop />} />
-					<Route path={"/experimental"} element={<ExperimentalUI />} />
+					{/* <Route path={"/experimental"} element={<ExperimentalUI />} /> */}
 					<Route path={"/auth"} element={<Auth />} />
 					<Route path={"/mens"} element={<MensPage />} />
 					<Route path={"/womens"} element={<WomensPage />} />
@@ -42,7 +41,6 @@ function App() {
 					<Route path="/admin" element={<AdminPanel />}>
 						<Route path="create" element={<CreateProduct />} />
 						<Route path="edit" element={<EditProduct />} />
-						<Route path="delete" element={<DeleteProduct />} />
 					</Route>
 					<Route path="*" element={<Navigate to="/" />} />
 				</Route>

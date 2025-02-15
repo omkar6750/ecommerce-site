@@ -29,14 +29,6 @@ const AdminPanel = () => {
 					>
 						Edit Product
 					</Button>
-					<Button
-						onClick={() => {
-							handleNavigate("delete");
-						}}
-						className="bg-[#0090ea] p-7 text-2xl"
-					>
-						Delete Product
-					</Button>
 				</div>
 			</div>
 			<div>
