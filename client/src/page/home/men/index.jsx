@@ -4,6 +4,9 @@ import MenDesk2 from "@/assets/Frontend_Assets/men_desk_2.jpg";
 import MenDesk3 from "@/assets/Frontend_Assets/men_desk_3.jpg";
 import MenDesk4 from "@/assets/Frontend_Assets/men_desk_4.jpg";
 import MenDesk5 from "@/assets/Frontend_Assets/men_desk_5.webp";
+import { Button } from "@/components/ui/button";
+import { ArrowRightFromLineIcon, ArrowRightIcon, ChevronRightIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const MensPage = () => {
 	return (
@@ -16,6 +19,11 @@ const MensPage = () => {
 						<h2 className="text-pretty text-3xl font-normal text-white">
 							Shop from our wide range of polos that fit into all occasions
 						</h2>
+						<Link to={"/shop/men"} state={{ tags: ["SWT"] }}>
+							<Button className="mt-7 rounded-full bg-white p-8 text-2xl font-medium text-black hover:bg-white/70">
+								Shop Now <ChevronRightIcon size={30} />
+							</Button>
+						</Link>
 					</div>
 				</section>
 				<section className="relative flex h-screen w-full snap-start items-center justify-center">
@@ -75,6 +83,11 @@ const MensPage = () => {
 						<h2 className="text-pretty text-2xl font-normal text-slate-900">
 							Light 100% cotton denim that offers comfort with style
 						</h2>
+						<Link to={"/shop/men"} state={{ tags: ["JNS"] }}>
+							<Button className="my-6 rounded-full bg-white p-8 text-2xl font-medium text-black hover:bg-white/70">
+								Shop Now <ArrowRightIcon size={30} />
+							</Button>
+						</Link>
 					</div>
 				</section>
 			</div>

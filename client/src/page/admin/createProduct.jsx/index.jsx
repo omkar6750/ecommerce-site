@@ -85,6 +85,9 @@ const CreateProduct = () => {
 	};
 
 	const handleNewProduct = async () => {
+		if (variant.length === 0) {
+			toast.error("Add variants first");
+		}
 		const payload = {
 			name: name,
 			gender: gender,
@@ -100,8 +103,6 @@ const CreateProduct = () => {
 					withCredentials: true,
 				});
 				const productId = response.data.product_id;
-
-				console.log(image);
 
 				const formData = new FormData();
 				formData.append("productId", productId);
@@ -148,7 +149,6 @@ const CreateProduct = () => {
 							<SelectItem value="male">male</SelectItem>
 							<SelectItem value="female">female</SelectItem>
 							<SelectItem value="kid">kid</SelectItem>
-							<SelectItem value="unisex">unisex</SelectItem>
 						</SelectContent>
 					</Select>
 					<Input

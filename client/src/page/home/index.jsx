@@ -8,7 +8,6 @@ import React, { useEffect, useState } from "react";
 
 function Shop() {
 	const [newCollection, setNewCollection] = useState([]);
-	const [offers, setOffers] = useState([]);
 	const [popular, setPopular] = useState([]);
 
 	useEffect(() => {
@@ -24,9 +23,6 @@ function Shop() {
 			);
 			console.log(response.data.data);
 			setNewCollection(response.data.data);
-
-			// console.error("Error fetching new collection:", error);
-			// toast.error("Failed to fetch New Collections");
 		};
 
 		fetchNewCollection();
@@ -35,8 +31,8 @@ function Shop() {
 	useEffect(() => {
 		const fetchProducts = async () => {
 			const response = await apiClient.post(
-				`${FETCH_PRODUCTS}?page=1&per_page=10`,
-				{ filters: { sort: "random" } },
+				`${FETCH_PRODUCTS}?page=1&per_page=4`,
+				{ filters: { sort: "newest", gender: "female" } },
 				{ withCredentials: true, headers: { "Content-Type": "application/json" } }
 			);
 			setPopular(response.data.data);
@@ -44,40 +40,22 @@ function Shop() {
 		fetchProducts();
 	}, []);
 
-	// useEffect(() => {
-	// 	const fetchPopular = async () => {
-	// 		try {
-	// 			const response = await apiClient.post(
-	// 				`${FETCH_PRODUCTS}?page=1&per_page=5`,
-	// 				{ filters: { sort: "random" } },
-	// 				{
-	// 					withCredentials: true,
-	// 					headers: { "Content-Type": "application/json" },
-	// 				}
-	// 			);
-	// 			setPopular(response.data.data);
-	// 		} catch (error) {
-	// 			console.error("Error fetching popular products:", error);
-	// 		}
-	// 	};
-
-	// 	fetchPopular();
-	// }, []);
-
 	return (
-		<div className="flex h-screen w-screen flex-col overflow-y-scroll scroll-smooth">
-			<section>
-				<Hero />
-			</section>
-			<section>
-				<Popular popular={popular} />
-			</section>
-			<section>
-				<Offers />
-			</section>
-			<section>
-				<NewCollections newCollection={newCollection} />
-			</section>
+		<div className="overflow-hidden">
+			<div className="h-screen snap-y snap-mandatory overflow-y-scroll scroll-smooth">
+				<section className="relative flex h-screen w-full snap-start items-center justify-center">
+					<Hero />
+				</section>
+				<section className="relative flex h-screen w-full snap-start items-center justify-center">
+					<NewCollections newCollection={newCollection} />
+				</section>
+				<section className="relative flex h-screen w-full snap-start items-center justify-center">
+					<Popular popular={popular} />
+				</section>
+				<section className="relative flex h-screen w-full snap-start items-center justify-center">
+					<Offers />
+				</section>
+			</div>
 		</div>
 	);
 }

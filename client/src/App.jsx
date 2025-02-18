@@ -14,6 +14,7 @@ import ExperimentalUI from "./page/experimental";
 import MensPage from "./page/home/men";
 import WomensPage from "./page/home/women";
 import KidsPage from "./page/home/kids";
+import ShopCategory from "./page/shopCategory";
 
 function App() {
 	const AdminRoute = ({ children }) => {
@@ -32,6 +33,13 @@ function App() {
 					<Route path={"/mens"} element={<MensPage />} />
 					<Route path={"/womens"} element={<WomensPage />} />
 					<Route path={"/kids"} element={<KidsPage />} />
+					<Route path={`/shop/men/:page?`} element={<ShopCategory category={"male"} />} />
+					<Route
+						path={`/shop/women/:page?`}
+						element={<ShopCategory category={"female"} />}
+					/>
+					<Route path={`/shop/kids/:page?`} element={<ShopCategory category={"kid"} />} />
+
 					<Route path={"/product"} element={<ProductCard />}>
 						<Route path={":productId"} element={<ProductCard />} />
 					</Route>

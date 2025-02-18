@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { Card, CardContent } from "./ui/card";
+import { Link } from "react-router-dom";
 
 const NewCollections = ({ newCollection }) => {
 	const data = newCollection;
@@ -34,13 +35,19 @@ const NewCollections = ({ newCollection }) => {
 								<div className="p-1">
 									<Card>
 										<CardContent className="flex aspect-square items-center justify-center p-6">
-											<Item
-												id={item.product_id}
-												image={item.product_image}
-												name={item.name}
-												old_price={item.old_price}
-												new_price={item.new_price}
-											/>
+											<Link
+												to={`/product/${item.product_id}`}
+												key={i}
+												state={{ product: item }}
+											>
+												<Item
+													id={item.product_id}
+													image={item.product_image}
+													name={item.name}
+													old_price={item.old_price}
+													new_price={item.new_price}
+												/>
+											</Link>
 										</CardContent>
 									</Card>
 								</div>

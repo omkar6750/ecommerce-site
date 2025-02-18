@@ -533,6 +533,49 @@ def order_generated(order_id):
     return jsonify({"message": "Order confirmed", "order_details": order_data}), 200
 
 
+@app.route("/api/cart/<user_id>", methods=["GET"])
+def get_cart(user_id):
+    cart_items = Cart.query.filter_by(user_id=user_id).all()
+    return jsonify([item.to_dict() for item in cart_items])
+
+# Add item to cart
+@app.route("/api/cart", methods=["POST"])
+def add_to_cart():
+    data = request.json
+    new_cart_item = Cart(
+        user_id=data["user_id"],
+        product_id=data["product_id"],
+        variant_sku=data.get("variant_sku"),
+        quantity=data["quantity"],
+    )
+    db.session.add(new_cart_item)
+    db.session.commit()
+    return jsonify(new_cart_item.to_dict()), 201
+
+# @app.route("/api/cart/<cart_id>", methods=["DELETE"])
+# def remove_from_cart(cart_id):
+#     cart_item = Cart.query.get(cart_id)
+#     if cart_item:
+#         db.session.delete(cart_item)
+#         db.session.commit()
+#     return jsonify({"message": "Item removed"}), 200
+
+@app.route("/api/cart/<cart_id>", methods=["PATCH"])
+def update_cart_quantity(cart_id):
+    data = request.json
+    cart_item = Cart.query.get(cart_id)
+    if cart_item:
+        cart_item.quantity = data["quantity"]
+        db.session.commit()
+    return jsonify(cart_item.to_dict())
+
+@app.route("/api/cart/<user_id>", methods=["DELETE"])
+def clear_cart(user_id):
+    Cart.query.filter_by(user_id=user_id).delete()
+    db.session.commit()
+    return jsonify({"message": "Cart cleared"}), 200
+
+
 # Product Fetching
 
 @app.route("/fetch_single_product/<string:product_id>", methods=["GET"])
@@ -576,7 +619,11 @@ def data_table_products():
 
     # Dynamically apply filters for each provided key
     for key, value in filters.items():
-        if hasattr(Product, key) and key not in ["sort", "randomPage"]:
+
+        if key == "tags" and isinstance(value, list) and value:
+            # Filter products that have any tag whose name is in the provided list
+            query = query.filter(Product.tags.any(Tag.name.in_(value)))
+        elif hasattr(Product, key) and key not in ["sort", "random"]:
             query = query.filter(getattr(Product, key) == value)
 
     sort_order = filters.get("sort")
