@@ -11,16 +11,15 @@ const Layout = () => {
 		location.pathname.startsWith("/admin/create-product") ||
 		location.pathname.startsWith("/admin/edit-product") ||
 		location.pathname.startsWith("/product") ||
-		location.pathname.startsWith("/experimental");
+		location.pathname.startsWith("/experimental") ||
+		location.pathname.startsWith("/cart");
 
-	// Conditions to hide the Footer (but NOT for /product routes)
 	const hideFooter =
 		location.pathname.startsWith("/auth") ||
 		location.pathname.startsWith("/admin") ||
 		location.pathname.startsWith("/profile") ||
 		location.pathname.startsWith("/admin/create-product") ||
 		location.pathname.startsWith("/admin/edit-product");
-	// location.pathname.startsWith("/experimental");
 
 	return (
 		<>

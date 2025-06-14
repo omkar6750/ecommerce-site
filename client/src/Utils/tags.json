@@ -1,74 +1,97 @@
 [
 	{
 		"label": "TSH",
-		"value": "1"
+		"value": "1",
+		"name": "T-Shirt"
 	},
 	{
 		"label": "SHT",
-		"value": "2"
+		"value": "2",
+		"name": "Shirt"
 	},
 	{
 		"label": "PNT",
-		"value": "3"
+		"value": "3",
+		"name": "Pants"
 	},
 	{
 		"label": "JKT",
-		"value": "4"
+		"value": "4",
+		"name": "Jacket"
 	},
 	{
 		"label": "SLL",
-		"value": "5"
+		"value": "5",
+		"name": "Sleeveless"
 	},
 	{
 		"label": "HSL",
-		"value": "6"
+		"value": "6",
+		"name": "Half Sleeve"
 	},
 	{
 		"label": "SWT",
-		"value": "7"
+		"value": "7",
+		"name": "Sweater"
 	},
 	{
 		"label": "PUL",
-		"value": "8"
+		"value": "8",
+		"name": "Pullover"
 	},
 	{
 		"label": "ZIP",
-		"value": "9"
+		"value": "9",
+		"name": "Zip Hoodie"
 	},
 	{
 		"label": "CRW",
-		"value": "10"
+		"value": "10",
+		"name": "Crew Neck"
 	},
 	{
 		"label": "VNK",
-		"value": "11"
+		"value": "11",
+		"name": "V-Neck"
 	},
 	{
 		"label": "POL",
-		"value": "12"
+		"value": "12",
+		"name": "Polo Shirt"
 	},
 	{
 		"label": "TTN",
-		"value": "13"
+		"value": "13",
+		"name": "Tank Top"
 	},
 	{
 		"label": "HOD",
-		"value": "14"
+		"value": "14",
+		"name": "Hoodie"
 	},
 	{
 		"label": "JNS",
-		"value": "15"
+		"value": "15",
+		"name": "Jeans"
 	},
 	{
 		"label": "PLN",
-		"value": "16"
+		"value": "16",
+		"name": "Plain Tee"
 	},
 	{
 		"label": "GRP",
-		"value": "17"
+		"value": "17",
+		"name": "Graphic Tee"
 	},
 	{
 		"label": "FSL",
-		"value": "18"
+		"value": "18",
+		"name": "Full Sleeve"
+	},
+	{
+		"label": "ELE",
+		"value": "19",
+		"name": "ELECTRONICS"
 	}
 ]

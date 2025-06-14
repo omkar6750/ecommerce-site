@@ -22,7 +22,7 @@ const WomensPage = () => {
 					></video>
 					<div className="absolute z-10 w-1/3 -translate-x-[80%] translate-y-[80%] space-y-8">
 						<h1 className="text-5xl font-medium text-white">Womens Collection</h1>
-						<Link to={"/shop/women"} state={{ tags: ["SWT"] }}>
+						<Link to={"/shop/women"} state={{ filter: "SWT" }}>
 							<Button className="mt-7 rounded-full bg-white p-8 text-2xl font-medium text-black hover:bg-white/70">
 								Shop Now <ChevronRightIcon size={30} />
 							</Button>
@@ -42,7 +42,7 @@ const WomensPage = () => {
 						<h2 className="text-pretty text-2xl font-normal text-white">
 							Limited Time Offer
 						</h2>
-						<Link to={"/shop/women"} state={{ tags: ["SWT"] }}>
+						<Link to={"/shop/women"} state={{ filter: "JKT" }}>
 							<Button className="mt-7 rounded-full bg-white p-8 text-2xl font-medium text-black hover:bg-white/70">
 								Shop Now <ChevronRightIcon size={30} />
 							</Button>
@@ -77,10 +77,10 @@ const WomensPage = () => {
 					></video>
 					<div className="absolute z-10 w-1/3 -translate-x-[80%] -translate-y-[70%] space-y-8">
 						<h1 className="text-5xl font-medium text-white">
-							Denim Collection | Wide Straight Jeans
+							Professional Wear For Women
 						</h1>
 						<h2 className="text-pretty text-2xl font-normal text-white">
-							Light 100% cotton denim that offers comfort with style
+							Suits | Pants
 						</h2>
 					</div>
 				</section>

@@ -2,16 +2,13 @@ import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ProductTable from "@/components/ProductTable";
 import { deleteProduct, fetchProducts, updateProduct } from "@/productApi";
-import apiClient from "@/lib/apiClient"; // ensure this is configured
 import { toast } from "sonner";
-import { data } from "react-router-dom";
 
 const EditProduct = () => {
 	const [page, setPage] = useState(1);
 
 	const queryClient = useQueryClient();
 
-	// Updated useQuery call with object syntax:
 	const {
 		data: products,
 		isLoading,
@@ -20,18 +17,14 @@ const EditProduct = () => {
 		queryKey: ["products", page],
 		queryFn: () => fetchProducts(page),
 	});
-	console.log(products);
 
-	// Updated useMutation call with object syntax:
 	const mutation = useMutation({
 		mutationFn: updateProduct,
 		onSuccess: () => {
-			// Invalidate and refetch products after a successful update
 			queryClient.invalidateQueries({ queryKey: ["products"] });
 		},
 	});
 
-	// Function to update data when an inline cell is updated
 	const updateData = (rowData, columnId, value) => {
 		const updatedProduct = { ...rowData, [columnId]: value };
 		mutation.mutate(updatedProduct);

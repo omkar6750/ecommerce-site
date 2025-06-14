@@ -6,18 +6,19 @@ export const EditableCell = ({
 	row,
 	column,
 	updateData,
-	inputType = "text", // default to text input
-	className = "", // default to an empty string if not provided
+	inputType = "text",
+	className = "",
+	options = [],
 }) => {
 	const [value, setValue] = useState(initialValue);
 
 	const onBlur = () => {
+		console.log(value, initialValue, row.original, column.id);
 		if (value !== initialValue) {
 			updateData(row.original, column.id, value);
 		}
 	};
 
-	// If inputType is 'select', render a dropdown
 	if (inputType === "select") {
 		return (
 			<Select
@@ -25,10 +26,8 @@ export const EditableCell = ({
 				value={value}
 				onValueChange={(newVal) => {
 					setValue(newVal);
-					// Immediately update on value change since onBlur might not fire
 					updateData(row.original, column.id, newVal);
 				}}
-				// onBlur not necessary if we update immediately on value change
 				onKeyDown={(e) => {
 					if (e.key === "Enter") {
 						e.target.blur();
@@ -38,17 +37,17 @@ export const EditableCell = ({
 				<SelectTrigger className="w-[180px]">
 					<SelectValue placeholder="Gender" />
 					<SelectContent>
-						<SelectItem value="male">male</SelectItem>
-						<SelectItem value="female">female</SelectItem>
-						<SelectItem value="kid">kid</SelectItem>
-						<SelectItem value="unisex">unisex</SelectItem>
+						{options.map((option) => (
+							<SelectItem key={option} value={option}>
+								{option}
+							</SelectItem>
+						))}
 					</SelectContent>
 				</SelectTrigger>
 			</Select>
 		);
 	}
 
-	// Otherwise, render an input of the specified type (e.g. text, number, etc.)
 	return (
 		<input
 			type={inputType}

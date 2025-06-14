@@ -13,13 +13,17 @@ const kidsPage = () => {
 		<div className="overflow-hidden">
 			<div className="h-screen snap-y snap-mandatory overflow-y-scroll scroll-smooth">
 				<section className="relative flex h-screen w-full snap-start items-center justify-center">
-					<img src={KidsDesk1} alt="" className="z-0 h-full w-full object-cover" />
+					<img
+						src={KidsDesk1}
+						alt=""
+						className="z-0 h-full w-full object-cover object-top"
+					/>
 					<div className="absolute z-10 w-1/3 -translate-x-[80%] translate-y-[80%] space-y-8">
 						<h1 className="text-5xl font-medium text-white">Outdoor Ready</h1>
 						<h2 className="text-pretty text-3xl font-normal text-white">
 							Shop from our wide range of summer wear
 						</h2>
-						<Link to={"/shop/kids"} state={{ tags: ["SWT"] }}>
+						<Link to={"/shop/kids"} state={{ filter: "SWT" }}>
 							<Button className="mt-7 rounded-full bg-white p-8 text-2xl font-medium text-black hover:bg-white/70">
 								Shop Now <ChevronRightIcon size={30} />
 							</Button>

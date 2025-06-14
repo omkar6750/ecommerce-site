@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
 	Select,
@@ -30,8 +30,10 @@ const CreateProduct = () => {
 	const [variant, setVariant] = useState([]);
 	const [SKU, setSKU] = useState("");
 	const [size, setSize] = useState("");
-	const [colour, setColour] = useState("");
+	const [color, setcolor] = useState("");
 	const [inventory, setInventory] = useState(0);
+	const [savedSkuParts, setSavedSkuParts] = useState({ gender: "", tag: "" });
+	const [collection, setCollection] = useState("");
 
 	const fileInputRef = useRef(null);
 	const handleAttachmentClick = () => {
@@ -51,10 +53,29 @@ const CreateProduct = () => {
 		setSelectedTags([]);
 		setVariant([]);
 		setSKU("");
-		setColour("");
+		setcolor("");
 		setSize("");
 		setInventory(0);
+		setCollection("");
 	};
+
+	useEffect(() => {
+		if (gender && selectedTags.length > 0) {
+			const firstTag = selectedTags[0]?.label.toUpperCase().slice(0, 3);
+			setSavedSkuParts({
+				gender: gender[0].toUpperCase(),
+				tag: firstTag,
+				collection: collection,
+			});
+		}
+	}, [gender, selectedTags, collection]);
+
+	useEffect(() => {
+		if (savedSkuParts.gender && savedSkuParts.tag && size) {
+			const newSku = `${savedSkuParts.gender}-${savedSkuParts.tag}-${size.toUpperCase()}-${collection}`;
+			setSKU(newSku);
+		}
+	}, [size, savedSkuParts, collection]);
 
 	const handleFileChange = (e) => {
 		const file = e.target.files[0];
@@ -65,13 +86,17 @@ const CreateProduct = () => {
 	};
 
 	const handleNewVariant = () => {
-		if (SKU && size && colour && inventory) {
+		if (variant.some((item) => item.sku === SKU)) {
+			toast.error("SKU already exists. Modify it.");
+			return;
+		}
+		if (SKU && size && color && inventory) {
 			setVariant((prev) => [
 				...prev,
 				{
 					sku: SKU,
 					size: size,
-					colour: colour,
+					color: color,
 					inventory_count: inventory,
 				},
 			]);
@@ -83,8 +108,11 @@ const CreateProduct = () => {
 		setVariant((prev) => prev.filter((variant) => variant.sku !== skuToDelete));
 		toast.success("Variant Deleted");
 	};
-
 	const handleNewProduct = async () => {
+		// if (!name || !gender || !newPrice || !description) {
+		// 	toast.error("Fill all fields");
+		// 	return;
+		// }
 		if (variant.length === 0) {
 			toast.error("Add variants first");
 		}
@@ -108,7 +136,6 @@ const CreateProduct = () => {
 				formData.append("productId", productId);
 				formData.append("file", image);
 				for (const [key, value] of formData.entries()) {
-					console.log(key, value);
 				}
 				const imageResponse = await apiClient.post(UPLOAD_IMAGE, formData, {
 					withCredentials: true,
@@ -154,7 +181,7 @@ const CreateProduct = () => {
 					<Input
 						type="number"
 						placeholder="New Price"
-						value={newPrice}
+						value={newPrice || ""}
 						onChange={(e) => {
 							setNewPrice(e.target.value);
 						}}
@@ -163,7 +190,7 @@ const CreateProduct = () => {
 					<Input
 						type="number"
 						placeholder="Old Price"
-						value={oldPrice}
+						value={oldPrice || ""}
 						onChange={(e) => {
 							setOldPrice(e.target.value);
 						}}
@@ -195,6 +222,34 @@ const CreateProduct = () => {
 				</div>
 				<div className="flex h-full flex-col border p-8">
 					<div className="flex flex-col space-y-10">
+						<Select onValueChange={(e) => setCollection(e)}>
+							<SelectTrigger className="w-[180px] bg-[#d4ebff]">
+								<SelectValue placeholder="Collection" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="SS">SS</SelectItem>
+								<SelectItem value="FW">FW</SelectItem>
+							</SelectContent>
+						</Select>
+
+						<Input
+							type="text"
+							placeholder="color"
+							value={color}
+							onChange={(e) => {
+								setcolor(e.target.value);
+							}}
+							className="bg-[#d4ebff]"
+						/>
+						<Input
+							type="number"
+							placeholder="Inventory"
+							value={inventory}
+							onChange={(e) => {
+								setInventory(e.target.value);
+							}}
+							className="bg-[#d4ebff]"
+						/>
 						<Input
 							type="text"
 							placeholder="SKU"
@@ -228,31 +283,14 @@ const CreateProduct = () => {
 								</SelectGroup>
 							</SelectContent>
 						</Select>
-						<Input
-							type="text"
-							placeholder="color"
-							value={colour}
-							onChange={(e) => {
-								setColour(e.target.value);
-							}}
-							className="bg-[#d4ebff]"
-						/>
-						<Input
-							type="number"
-							placeholder="Inventory"
-							value={inventory}
-							onChange={(e) => {
-								setInventory(e.target.value);
-							}}
-							className="bg-[#d4ebff]"
-						/>
 					</div>
-					<div className="h-full">
+
+					<div className="mt-5 h-full">
 						{variant.map((item, i) => (
 							<div key={i} className="flex space-x-10">
 								<div>{item.sku}</div>
 								<div>{item.size}</div>
-								<div>{item.colour}</div>
+								<div>{item.color}</div>
 								<div>{item.inventory_count}</div>
 								<button>
 									<Trash2
@@ -275,7 +313,7 @@ const CreateProduct = () => {
 					<div className="flex h-full w-full items-center justify-center p-2">
 						{image ? (
 							<div className="flex flex-col items-center justify-center">
-								<img className="h-full w-full object-cover" src={url} alt="" />
+								<img className="h-2/3 w-3/4 object-cover" src={url} alt="" />
 								<p className="text-gray-600">Selected: {image.name}</p>
 								<button
 									onClick={() => {
@@ -300,7 +338,7 @@ const CreateProduct = () => {
 									type="file"
 									ref={fileInputRef}
 									className="hidden"
-									accept=".png, .jpg, .jpeg, .avif"
+									accept=".png, .jpg,.webp, .jpeg, .avif"
 									onChange={handleFileChange}
 								/>
 							</div>

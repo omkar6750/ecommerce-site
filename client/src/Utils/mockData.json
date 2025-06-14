@@ -12,13 +12,13 @@
 			{
 				"sku": "POLO-M-RED",
 				"size": "M",
-				"colour": "Red",
+				"color": "Red",
 				"inventory_count": 20
 			},
 			{
 				"sku": "POLO-L-BLUE",
 				"size": "L",
-				"colour": "Blue",
+				"color": "Blue",
 				"inventory_count": 15
 			}
 		]
@@ -36,13 +36,13 @@
 			{
 				"sku": "DJKT-S-BLU",
 				"size": "S",
-				"colour": "Blue",
+				"color": "Blue",
 				"inventory_count": 10
 			},
 			{
 				"sku": "DJKT-M-BLU",
 				"size": "M",
-				"colour": "Blue",
+				"color": "Blue",
 				"inventory_count": 8
 			}
 		]
@@ -60,13 +60,13 @@
 			{
 				"sku": "SHORT-S-BLK",
 				"size": "S",
-				"colour": "Black",
+				"color": "Black",
 				"inventory_count": 25
 			},
 			{
 				"sku": "SHORT-M-BLK",
 				"size": "M",
-				"colour": "Black",
+				"color": "Black",
 				"inventory_count": 20
 			}
 		]
@@ -84,13 +84,13 @@
 			{
 				"sku": "KT-XS-GRN",
 				"size": "XS",
-				"colour": "Green",
+				"color": "Green",
 				"inventory_count": 30
 			},
 			{
 				"sku": "KT-S-GRN",
 				"size": "S",
-				"colour": "Green",
+				"color": "Green",
 				"inventory_count": 28
 			}
 		]
@@ -108,13 +108,13 @@
 			{
 				"sku": "SHRT-M-NAVY",
 				"size": "M",
-				"colour": "Navy",
+				"color": "Navy",
 				"inventory_count": 18
 			},
 			{
 				"sku": "SHRT-L-NAVY",
 				"size": "L",
-				"colour": "Navy",
+				"color": "Navy",
 				"inventory_count": 12
 			}
 		]
@@ -132,13 +132,13 @@
 			{
 				"sku": "JEANS-32-BLU",
 				"size": "32",
-				"colour": "Blue",
+				"color": "Blue",
 				"inventory_count": 22
 			},
 			{
 				"sku": "JEANS-34-BLU",
 				"size": "34",
-				"colour": "Blue",
+				"color": "Blue",
 				"inventory_count": 20
 			}
 		]
@@ -156,13 +156,13 @@
 			{
 				"sku": "DRSS-S-RED",
 				"size": "S",
-				"colour": "Red",
+				"color": "Red",
 				"inventory_count": 10
 			},
 			{
 				"sku": "DRSS-M-RED",
 				"size": "M",
-				"colour": "Red",
+				"color": "Red",
 				"inventory_count": 8
 			}
 		]
@@ -180,13 +180,13 @@
 			{
 				"sku": "CHINO-30-KHAKI",
 				"size": "30",
-				"colour": "Khaki",
+				"color": "Khaki",
 				"inventory_count": 15
 			},
 			{
 				"sku": "CHINO-32-KHAKI",
 				"size": "32",
-				"colour": "Khaki",
+				"color": "Khaki",
 				"inventory_count": 18
 			}
 		]
@@ -204,13 +204,13 @@
 			{
 				"sku": "HOODIE-M-GRY",
 				"size": "M",
-				"colour": "Grey",
+				"color": "Grey",
 				"inventory_count": 12
 			},
 			{
 				"sku": "HOODIE-L-GRY",
 				"size": "L",
-				"colour": "Grey",
+				"color": "Grey",
 				"inventory_count": 10
 			}
 		]
@@ -228,19 +228,19 @@
 			{
 				"sku": "CREW-XS-WHT",
 				"size": "XS",
-				"colour": "White",
+				"color": "White",
 				"inventory_count": 40
 			},
 			{
 				"sku": "CREW-S-WHT",
 				"size": "S",
-				"colour": "White",
+				"color": "White",
 				"inventory_count": 35
 			},
 			{
 				"sku": "CREW-M-WHT",
 				"size": "M",
-				"colour": "White",
+				"color": "White",
 				"inventory_count": 30
 			}
 		]

@@ -12,7 +12,6 @@ function Shop() {
 
 	useEffect(() => {
 		const fetchNewCollection = async () => {
-			// Sending sort: newest and page=1 (per_page defaults to 10 on backend)
 			const response = await apiClient.post(
 				`/api/products?page=1`,
 				{ filters: { sort: "newest" } },
@@ -21,7 +20,6 @@ function Shop() {
 					headers: { "Content-Type": "application/json" },
 				}
 			);
-			console.log(response.data.data);
 			setNewCollection(response.data.data);
 		};
 

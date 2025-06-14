@@ -1,18 +1,26 @@
+import apiClient from "@/lib/apiClient";
+import { CART_ROUTE } from "@/Utils/constants";
+import e from "cors";
+import { data, useNavigate } from "react-router-dom";
 
 export const createCartSlice = (set) => ({
-    cart: [], 
-    addToCart: (product) => set((state) => ({
-        cart: [...state.cart, product],
-    })),
-    removeFromCart: (productId) => set((state) => ({
-        cart: state.cart.filter((product) => product.id !== productId),
-    })),
-    clearCart: () => set({ cart: [] }),
-    updateCartItemQuantity: (productId, quantity) => set((state) => ({
-        cart: state.cart.map((product) =>
-            product.id === productId ? { ...product, quantity } : product
-        ),
-    })),
+    cart: [],
+
+
+    fetchCart: async () => {
+
+        try {
+            const response = await apiClient.get(CART_ROUTE, { withCredentials: true });
+            if (response.status === 200) {
+                set({ cart: response.data.items });
+
+            }
+        } catch (error) {
+            if (error.response.status === 401) {
+            }
+
+        }
+    },
 });
 
 

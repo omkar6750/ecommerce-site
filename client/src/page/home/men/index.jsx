@@ -19,7 +19,7 @@ const MensPage = () => {
 						<h2 className="text-pretty text-3xl font-normal text-white">
 							Shop from our wide range of polos that fit into all occasions
 						</h2>
-						<Link to={"/shop/men"} state={{ tags: ["SWT"] }}>
+						<Link to={"/shop/men"} state={{ filter: "POL" }}>
 							<Button className="mt-7 rounded-full bg-white p-8 text-2xl font-medium text-black hover:bg-white/70">
 								Shop Now <ChevronRightIcon size={30} />
 							</Button>
@@ -54,6 +54,11 @@ const MensPage = () => {
 						<h2 className="text-pretty text-2xl font-normal text-white">
 							Breeze through this summer in style
 						</h2>
+						<Link to={"/shop/men"} state={{ filter: "SHT" }}>
+							<Button className="mt-7 rounded-full bg-white p-8 text-2xl font-medium text-black hover:bg-white/70">
+								Shop Now <ChevronRightIcon size={30} />
+							</Button>
+						</Link>
 					</div>
 				</section>
 				<section className="relative flex h-screen w-full snap-start items-center justify-center">
@@ -83,7 +88,7 @@ const MensPage = () => {
 						<h2 className="text-pretty text-2xl font-normal text-slate-900">
 							Light 100% cotton denim that offers comfort with style
 						</h2>
-						<Link to={"/shop/men"} state={{ tags: ["JNS"] }}>
+						<Link to={"/shop/men"} state={{ filter: "JNS" }}>
 							<Button className="my-6 rounded-full bg-white p-8 text-2xl font-medium text-black hover:bg-white/70">
 								Shop Now <ArrowRightIcon size={30} />
 							</Button>

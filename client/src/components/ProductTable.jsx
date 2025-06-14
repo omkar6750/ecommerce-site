@@ -1,14 +1,9 @@
-// ProductTable.jsx
 import React, { useMemo } from "react";
 import { useReactTable, getCoreRowModel, flexRender } from "@tanstack/react-table";
 import { EditableCell } from "./EditableCell";
-import mockData from "@/Utils/mockData.json";
 import NestedVariantsTable from "./NestedVariantsTable";
 
 const ProductTable = ({ data, updateData, onDeleteProduct }) => {
-	// Define columns for product-level fields.
-	// For simplicity, we're editing only a few fields.
-
 	const columns = useMemo(
 		() => [
 			{
@@ -37,6 +32,7 @@ const ProductTable = ({ data, updateData, onDeleteProduct }) => {
 						column={column}
 						updateData={updateData}
 						inputType="select"
+						options={["male", "female", "kid"]}
 					/>
 				),
 			},
@@ -79,11 +75,16 @@ const ProductTable = ({ data, updateData, onDeleteProduct }) => {
 			{
 				header: "Tags",
 				accessorKey: "tags",
-				// Since tags is an array of strings, display as comma-separated
-				cell: ({ getValue }) => getValue().join(", "),
+				cell: ({ getValue, row, column }) => (
+					<EditableCell
+						initialValue={getValue()}
+						row={row}
+						column={column}
+						updateData={updateData}
+					/>
+				),
 			},
 			{
-				// Column for the Delete button
 				header: "Delete",
 				cell: ({ row }) => (
 					<button
@@ -110,7 +111,7 @@ const ProductTable = ({ data, updateData, onDeleteProduct }) => {
 	);
 
 	const table = useReactTable({
-		data: data.data || mockData,
+		data: data.data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
 	});
@@ -150,7 +151,6 @@ const ProductTable = ({ data, updateData, onDeleteProduct }) => {
 										colSpan={row.getVisibleCells().length}
 										className="bg-gray-50"
 									>
-										{/* Render the nested variants table for this product */}
 										<NestedVariantsTable
 											variants={row.original.variants}
 											updateData={updateData}

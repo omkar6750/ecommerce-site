@@ -35,19 +35,7 @@ const NewCollections = ({ newCollection }) => {
 								<div className="p-1">
 									<Card>
 										<CardContent className="flex aspect-square items-center justify-center p-6">
-											<Link
-												to={`/product/${item.product_id}`}
-												key={i}
-												state={{ product: item }}
-											>
-												<Item
-													id={item.product_id}
-													image={item.product_image}
-													name={item.name}
-													old_price={item.old_price}
-													new_price={item.new_price}
-												/>
-											</Link>
+											<Item product={item} />
 										</CardContent>
 									</Card>
 								</div>

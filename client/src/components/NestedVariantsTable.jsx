@@ -8,15 +8,6 @@ const NestedVariantsTable = ({ variants, updateData, productId }) => {
 			{
 				header: "SKU",
 				accessorKey: "sku",
-				cell: ({ getValue, row, column }) => (
-					<EditableCell
-						initialValue={getValue()}
-						row={row}
-						column={column}
-						updateData={updateData}
-						inputType="text"
-					/>
-				),
 			},
 			{
 				header: "Size",
@@ -32,8 +23,8 @@ const NestedVariantsTable = ({ variants, updateData, productId }) => {
 				),
 			},
 			{
-				header: "Colour",
-				accessorKey: "colour",
+				header: "color",
+				accessorKey: "color",
 				cell: ({ getValue, row, column }) => (
 					<EditableCell
 						initialValue={getValue()}

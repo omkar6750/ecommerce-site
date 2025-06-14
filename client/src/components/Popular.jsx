@@ -12,18 +12,7 @@ const Popular = ({ popular }) => {
 			</div>
 			<div className="mt-36 grid grid-cols-4 gap-8">
 				{data.map((item, i) => {
-					return (
-						<Link to={`/product/${item.product_id}`} key={i} state={{ product: item }}>
-							<Item
-								key={i}
-								id={item.product_id}
-								name={item.name}
-								image={item.product_image}
-								new_price={item.new_price}
-								old_price={item.old_price}
-							/>
-						</Link>
-					);
+					return <Item key={i} product={item} />;
 				})}
 			</div>
 		</div>

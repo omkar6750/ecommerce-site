@@ -1,13 +1,11 @@
-// productApi.js
 import apiClient from './lib/apiClient';
+import { ORDER_ROUTE } from './Utils/constants';
 
 export const fetchProducts = async (page = 1) => {
     const response = await apiClient.post(`/api/products?page=${page}`, {
         withCredentials: true, headers: { 'Content-Type': 'application/json' }
     });
-    console.log("Response data:", response.data); // Debug logging
 
-    // If response.data is undefined, return a default object
     if (!response.data) {
         return { data: [], meta: {} };
     }
@@ -15,7 +13,7 @@ export const fetchProducts = async (page = 1) => {
 };
 
 export const updateProduct = async (updatedProduct) => {
-    // Assuming your backend endpoint is PATCH /api/products/:product_id
+
     const response = await apiClient.patch(
         `/edit_product/${updatedProduct.product_id}`,
         updatedProduct,
@@ -30,4 +28,24 @@ export const deleteProduct = async (deletedProduct) => {
     });
     return response.data;
 
+}
+
+export const getOrders = async (page = 1) => {
+    const response = await apiClient.get(`${ORDER_ROUTE}?page=${page}`, {
+        withCredentials: true,
+    });
+
+    if (!response.data) {
+        return { data: [], meta: {} };
+    }
+    return response.data;
+}
+
+export const updateOrderStatus = async (order_status, orderId) => {
+    const response = await apiClient.patch(`${ORDER_ROUTE}/${orderId}`, {
+        order_status,
+    }, {
+        withCredentials: true,
+    });
+    return response.data;
 }
