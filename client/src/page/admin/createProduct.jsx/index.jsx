@@ -313,7 +313,12 @@ const CreateProduct = () => {
 					<div className="flex h-full w-full items-center justify-center p-2">
 						{image ? (
 							<div className="flex flex-col items-center justify-center">
-								<img className="h-2/3 w-3/4 object-cover" src={url} alt="" />
+								<img
+									className="h-2/3 w-3/4 object-cover"
+									loading="lazy"
+									src={url}
+									alt=""
+								/>
 								<p className="text-gray-600">Selected: {image.name}</p>
 								<button
 									onClick={() => {

@@ -11,7 +11,12 @@ const Electronics = () => {
 		<div className="overflow-hidden">
 			<div className="h-screen snap-y snap-mandatory overflow-y-scroll">
 				<section className="relative flex h-screen w-full snap-start items-center justify-center object-cover">
-					<img src={electronics_desk_3} alt="" className="h-full w-full object-cover" />
+					<img
+						src={electronics_desk_3}
+						loading="lazy"
+						alt=""
+						className="h-full w-full object-cover"
+					/>
 					<div className="absolute">
 						<Link to={"/shop/electronics"} state={{ filter: "ELE" }}>
 							<Button className="mt-7 rounded-full bg-white p-8 text-2xl font-medium text-black hover:bg-white/70">
@@ -21,7 +26,12 @@ const Electronics = () => {
 					</div>
 				</section>
 				<section className="relative flex h-screen w-full snap-start items-center justify-center">
-					<img src={electronics_desk_1} alt="" className="h-full w-full object-cover" />
+					<img
+						src={electronics_desk_1}
+						loading="lazy"
+						alt=""
+						className="h-full w-full object-cover"
+					/>
 					<div className="absolute">
 						<Link to={"/shop/electronics"} state={{ filter: "ELE" }}>
 							<Button className="mt-7 rounded-full bg-white p-8 text-2xl font-medium text-black hover:bg-white/70">
@@ -31,7 +41,12 @@ const Electronics = () => {
 					</div>
 				</section>
 				<section className="relative flex h-screen w-full snap-start items-center justify-center object-cover">
-					<img src={electronics_desk_2} alt="" className="h-full w-full object-cover" />
+					<img
+						src={electronics_desk_2}
+						loading="lazy"
+						alt=""
+						className="h-full w-full object-cover"
+					/>
 					<div className="absolute">
 						<Link to={"/shop/electronics"} state={{ filter: "ELE" }}>
 							<Button className="mt-7 rounded-full bg-white p-8 text-2xl font-medium text-black hover:bg-white/70">

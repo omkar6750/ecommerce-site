@@ -8,7 +8,12 @@ import { Link } from "react-router-dom";
 const Hero = () => {
 	return (
 		<div className="relative flex items-center justify-center">
-			<img src={heroImage} alt="" className="h-screen w-screen border object-cover" />
+			<img
+				src={heroImage}
+				loading="lazy"
+				alt=""
+				className="h-screen w-screen border object-cover"
+			/>
 			<div className="absolute flex -translate-x-28 flex-col justify-center gap-[20px] leading-tight">
 				<h2 className="text-2xl font-semibold text-slate-900">NEW ARRIVALS ONLY</h2>
 				<div>

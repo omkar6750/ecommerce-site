@@ -69,6 +69,7 @@ const kidsPage = () => {
 					<video
 						autoPlay
 						loop
+						preload="none"
 						src={KidsDesk4}
 						className="z-0 h-full w-full object-cover"
 					></video>

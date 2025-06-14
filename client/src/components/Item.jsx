@@ -106,6 +106,7 @@ const Item = (data) => {
 				<img
 					src={`${HOST}/uploads/${props.product_image}`}
 					alt=""
+					loading="lazy"
 					className="object-cover"
 				/>
 			</Link>

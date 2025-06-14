@@ -7,7 +7,12 @@ const Offers = () => {
 	return (
 		<div className="flex h-full w-full items-center justify-center">
 			<div className="relative flex h-5/6 w-4/5 items-center justify-center border">
-				<img src={offersImage} alt="" className="h-full w-full object-cover" />
+				<img
+					src={offersImage}
+					loading="lazy"
+					alt=""
+					className="h-full w-full object-cover"
+				/>
 				<div className="absolute flex -translate-x-[400px] translate-y-40 flex-col items-start justify-center">
 					<h1 className="mb-3 text-7xl font-semibold text-slate-900 text-shadow-sm">
 						EXCLUSIVE

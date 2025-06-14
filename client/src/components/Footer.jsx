@@ -19,13 +19,13 @@ const Footer = () => {
 			</ul>
 			<div className="flex gap-5">
 				<div className="rounded-md border-[1px] border-solid border-[#ebebeb] bg-[#fbfbfb] p-3 pb-2">
-					<img src={instagram_icon} alt="" />
+					<img src={instagram_icon} loading="lazy" alt="" />
 				</div>
 				<div className="rounded-md border-[1px] border-solid border-[#ebebeb] bg-[#fbfbfb] p-3 pb-2">
-					<img src={pinterest_icon} alt="" />
+					<img src={pinterest_icon} loading="lazy" alt="" />
 				</div>
 				<div className="rounded-md border-[1px] border-solid border-[#ebebeb] bg-[#fbfbfb] p-3 pb-2">
-					<img src={whatsapp_icon} alt="" />
+					<img src={whatsapp_icon} loading="lazy" alt="" />
 				</div>
 			</div>
 			<div>
