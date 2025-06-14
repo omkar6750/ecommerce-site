@@ -1,138 +1,106 @@
-# E-Commerce Site
+🛒 E-Commerce Site – Full-Stack Project
+This is a complete, full-stack ecommerce site I built from scratch. It has everything you'd expect in a real online store — user accounts, product browsing, shopping cart, order placement, and even an admin dashboard to manage products. I designed it to be clean, scalable, and easy to maintain, with a strong focus on real-world architecture and features.
 
-Welcome to the **E-Commerce Site** project! This application is built with a **Flask** backend and a **React** (Vite) frontend. It uses modern technologies such as **Tailwind CSS**, **shadcn/ui components**, **Axios**, **React Router**, and **Zustand** for state management.
+✅ What’s Built and Working
+👤 User Side
+Authentication is fully implemented using secure HTTP-only cookies (no token in localStorage).
 
-> **Note:** The database is currently empty, so mock data is used for product display. Features like profile checkout, full user profiles, and complete admin functionalities are still under development.
+Users can sign up, log in, and access protected routes safely.
 
----
+A full user profile system is in place — users can update their info and save their address.
 
-## Technologies Used
+Order placement works: when a user checks out, the order is created and stored in the backend.
 
-### Frontend
-- **React & Vite:** Fast development environment for building React applications.
-- **Tailwind CSS:** Utility-first CSS framework for responsive, modern designs.
-- **shadcn/ui Components:** Pre-designed, customizable UI components.
-- **Axios:** Promise-based HTTP client for API requests.
-- **React Router:** Declarative routing for navigation.
-- **Zustand:** Lightweight state management.
+Users also get a personal order history page where they can see all their past orders.
 
-### Backend
-- **Python:** 3.13  
-- **Flask:** Lightweight Python web framework.
-- **Flask-CORS:** Enables Cross-Origin Resource Sharing.
-- **SQLAlchemy:** ORM for database interactions.
-- **JWT:** JSON Web Tokens for authentication.
-- **SQLite:** Used by default (mock data is used for now).
+Cart is persistent and handled with Zustand for quick, reactive updates.
 
----
+🛒 Shopping Experience
+Products are displayed by category (Men, Women, Electronics, etc.) with pagination.
 
-## Setup & Installation
+Users can filter by tags, browse featured items, and see only what matters per page.
 
-### Backend Setup
+The whole UI is fully responsive and built with Tailwind CSS + shadcn/ui for a clean experience.
 
-1. **Create a `.env` file** in your backend root directory with the following variables:
+Fast loading with Vite, lazy loading for images, and only fetching what’s needed.
 
-    ```env
-    JWT_SECRET_KEY=your_jwt_secret_key_here
-    CORS_URI=https://localhost:5173/
-    ```
+🛠 Admin Panel
+A fully functional admin dashboard is included.
 
-2. **Install dependencies:**
+Built with TanStack Table + React Query for smooth, real-time updates.
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+Admins can:
 
-3. **Run the Flask server:**
+View products in a sortable, filterable table
 
-    ```bash
-    flask run
-    ```
+Create, update, and delete products with instant UI feedback
 
-   The backend server will start at: `http://127.0.0.1:5000`
+Built to be readable and usable without clutter.
 
-### Frontend Setup
+🔒 Auth & State Management
+JWT cookies (HTTP-only) for secure auth.
 
-1. **Create a `.env` file** in your frontend root directory with the following variable:
+Zustand for global cart state.
 
-    ```env
-    VITE_SERVER_URL=http://127.0.0.1:5000
-    ```
+Cart syncs with backend on checkout, and clears once an order is placed.
 
-2. **Install dependencies:**
+Only authenticated users can place orders or view their profile/order history.
 
-    ```bash
-    npm install
-    ```
+🌐 Deployment
+Frontend is deployed on Vercel
 
-3. **Run the Vite development server:**
+Backend runs on Render
 
-    ```bash
-    npm run dev
-    ```
+Proper CORS handling in place to secure cross-origin requests
 
-   The frontend will be accessible at: `http://localhost:5173`
+🧩 Tech Stack
+Frontend:
+React + Vite
 
----
+Tailwind CSS
 
-## Running the Application Locally
+shadcn/ui
 
-1. **Start the Backend:**  
-   Run the Flask app with `flask run`. The backend will be available at `http://127.0.0.1:5000`.
+Zustand
 
-2. **Start the Frontend:**  
-   Run the Vite development server with `npm run dev`. Open your browser at `http://localhost:5173`.
+Axios
 
-3. **Navigate the Site:**  
-   Use the navigation bar to explore shop categories, product details, the cart, and other routes.
+React Router
 
----
+TanStack Table
 
-## Features
+React Query
 
-- **Product Display:**  
-  - Products are displayed in a grid using Tailwind CSS.
-  - Currently uses mock data (due to the empty database).
+Backend:
+Python 3.13
 
-- **Shopping Cart:**  
-  - Basic cart functionalities implemented with Zustand.
-  - Users can add, remove, and clear items.
+Flask + Flask-CORS
 
-- **User Authentication:**  
-  - JWT-based authentication is set up on the backend.
-  - Authentication routes are provided for login, signup, etc.
+SQLAlchemy ORM
 
-- **Routing:**  
-  - Uses React Router to navigate between pages (Shop, Product Detail, Cart, Admin, etc.).
+JWT with secure cookies
 
----
+SQLite (swappable for Postgres later)
 
-## Known Limitations & Future Enhancements
+📦 Features Overview
+🔐 Login/Signup with cookie-based auth
 
-- **Profile Checkout & User Profiles:**  
-  These features are not fully implemented yet.
+🛍 Product pages with pagination, filtering
 
-- **Admin Functionalities:**  
-  Basic admin routes exist, but product editing and other admin actions need further development.
+🧺 Shopping cart with persistent state
 
-- **Real Data Integration:**  
-  The app currently displays mock data; product data is not in the database yet
-- **JWT cookies:**
-   currently jwt cookies are being stored in localstorage which is not very secure will update that eventually
----
+🧾 Checkout flow with order creation
 
-## Additional Notes
+👤 User profile + order history
 
-- **CORS Configuration:**  
-  The backend uses Flask-CORS to allow requests from `https://localhost:5173`.
+🛠 Admin dashboard for product management
 
-- **Axios Usage:**  
-  Axios is used in the frontend to make HTTP requests to the backend API.
+📦 Orders stored and tied to user accounts
 
-- **UI Components:**  
-  The design is powered by Tailwind CSS and shadcn/ui components for a modern, responsive UI.
+🚧 Work In Progress
+Admin-side order fulfillment system (e.g. marking orders as shipped/delivered)
 
----
+Possibly adding email notifications, payment integration, and advanced analytics later
 
-Happy coding! 🚀  
-If you encounter any issues or have suggestions, feel free to open an issue or contribute to the project.
+TL;DR
+This is a full-featured ecommerce platform with working login, cart, checkout, user profiles, order history, and a live admin panel. It's built to be extendable and ready for production with just a few finishing touches like order fulfillment. Everything is structured cleanly with a proper frontend-backend separation and deployment-ready setup.
